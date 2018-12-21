@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="kt::Array&lt;*&gt;">  
+      <DisplayString>{{ Size={m_size} }}</DisplayString>  
+      <Expand>  
+          <Item Name="Size" ExcludeView="simple">m_size</Item>  
+          <Item Name="Capacity" ExcludeView="simple">m_capacity</Item>  
+          <ArrayItems>  
+              <Size>m_size</Size>  
+              <ValuePointer>m_data</ValuePointer>  
+          </ArrayItems>  
+      </Expand>  
+  </Type>
+
+  <Type Name="kt::StringView">
+    <DisplayString>{m_ptr,[m_size]s}</DisplayString>
+  </Type>
+
+  <Type Name="kt::StaticString&lt;*&gt;">
+    <DisplayString>{{ {m_data, s} }}</DisplayString>
+    <Expand>
+      <Item Name="Size" ExcludeView="simple">m_size</Item>
+      <Item Name="Capacity" ExcludeView="simple">c_capacityNoNull</Item>
+      <Item Name="String" ExcludeView="simple">m_data</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="kt::HashMap&lt;*&gt;">
+    <DisplayString>{{ Size: {m_size}, Capacity: {m_capacity} }}</DisplayString>
+    <Expand>
+      <Item Name="Size" ExcludeView="simple">m_size</Item>
+      <Item Name="Capacity" ExcludeView="simple">m_capacity</Item>
+
+      <CustomListItems MaxItemsPerView="5000" ExcludeView="simple">
+        <Variable Name="Ptr" InitialValue="m_entries"/>
+        <Variable Name="Idx" InitialValue ="0"/>
+        <Size>m_size</Size>
+        <Loop>
+          <If Condition="m_entries[Idx].m_probeDist != -1">
+            <Item>Ptr[Idx].m_kvPair</Item>
+          </If>
+          <Exec>Idx += 1</Exec>
+        </Loop>
+      </CustomListItems>
+      
+    </Expand>
+  </Type>
+
+  <Type Name="kt::HashMap&lt;*&gt;::ConstIterator">
+  	<DisplayString Condition="m_map == 0">Invalid Iterator</DisplayString>
+	<DisplayString Condition="m_idx == 0xFFFFFFFF">End</DisplayString>
+	<Expand>
+		<Item Name="Pair">m_map->m_entries[m_idx].m_kvPair</Item>
+	</Expand>
+  </Type>
+
+  <Type Name="kt::HashMap&lt;*&gt;::Iterator">
+    <DisplayString Condition="m_map == 0">Invalid Iterator</DisplayString>
+    <DisplayString Condition="m_idx == 0xFFFFFFFF">End</DisplayString>
+    <Expand>
+      <Item Name="Pair">m_map->m_entries[m_idx].m_kvPair</Item>
+    </Expand>
+  </Type>
+
+</AutoVisualizer>  
