@@ -30,7 +30,7 @@ source_group("inl" FILES ${INL_SOURCES})
 source_group("Source" FILES ${COMPILED_SOURCES} ${NATVIS_SOURCES} ${HEADER_SOURCES})
 source_group("External" FILES ${EXTERNAL_SOURCES})
 
-include_directories("/")
-
 kt_default_build_settings()
 add_library(kt ${COMPILED_SOURCES} ${HEADER_SOURCES} ${INL_SOURCES} ${NATVIS_SOURCES} ${EXTERNAL_SOURCES})
+target_include_directories(kt PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../)
+target_include_directories(kt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
