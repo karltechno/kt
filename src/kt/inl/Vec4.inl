@@ -161,13 +161,13 @@ KT_FORCEINLINE float DistanceSq(Vec4 const& _lhs, Vec4 const& _rhs)
 
 KT_FORCEINLINE float Dot(Vec4 const& _lhs, Vec4 const& _rhs)
 {
-	return _lhs.x * _rhs.x + _lhs.y * _rhs.y + _lhs.w * _rhs.w;
+	return _lhs.x * _rhs.x + _lhs.y * _rhs.y + _lhs.z * _rhs.z + _lhs.w * _rhs.w;
 }
 
 
 KT_FORCEINLINE bool operator==(Vec4 const& _v1, Vec4 const& _v2)
 {
-	return _v1.x == _v2.x && _v1.y == _v2.y && _v1.z == _v2.z;
+	return _v1.x == _v2.x && _v1.y == _v2.y && _v1.z == _v2.z && _v1.w == _v2.w;
 }
 
 
