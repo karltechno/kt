@@ -9,7 +9,6 @@ set(COMPILED_SOURCES
     "Memory.cpp"
     "Strings.cpp"
     "Timer.cpp"
-    "LinearAllocator.cpp"
     "HandleAllocator.cpp"
 )
 
