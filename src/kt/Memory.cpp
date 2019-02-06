@@ -110,6 +110,8 @@ void SetDefaultAllocator(IAllocator* _allocator)
 
 }
 
+#if KT_OVERRIDE_NEW
+
 void* operator new[](std::size_t count, const std::nothrow_t&)
 {
 	return kt::s_defaultAllocator->Alloc(count, KT_DEFAULT_ALIGN);
@@ -149,3 +151,5 @@ void* operator new(std::size_t count)
 {
 	return kt::s_defaultAllocator->Alloc(count, KT_DEFAULT_ALIGN);
 }
+
+#endif

@@ -46,6 +46,7 @@ struct IAllocator
 	virtual void* Alloc(size_t const _sz, size_t const _align = KT_DEFAULT_ALIGN) = 0;
 	virtual void* ReAlloc(void* _ptr, size_t const _sz) = 0;
 	virtual void Free(void* _ptr) = 0;
+	virtual void Free(void* _ptr, size_t const _sz) { KT_UNUSED(_sz); Free(_ptr); }
 };
 
 struct CrtAllocator : IAllocator
