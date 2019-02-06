@@ -51,6 +51,26 @@ private:
 	bool m_running = false;
 };
 
+class Event
+{
+public:
+	enum class ResetType { Manual, Auto };
+
+	Event(ResetType _reset = ResetType::Manual, bool _initialState = false);
+	~Event();
+
+	void Wait();
+	void Wait(uint32_t _waitMillis);
+
+	void Signal();
+	void Reset();
+
+private:
+	void* m_event;
+};
+
+uint32_t LogicalCoreCount();
+
 KT_FORCEINLINE void AcquireFence();
 KT_FORCEINLINE void ReleaseFence();
 KT_FORCEINLINE void AcquireReleaseFence();

@@ -183,5 +183,49 @@ void Thread::InternalRun(Thread* _pThis)
 	AtomicStore8((int8_t*)&_pThis->m_running, 0);
 }
 
+uint32_t LogicalCoreCount()
+{
+#if KT_PLATFORM_WINDOWS
+	SYSTEM_INFO sysinfo;
+	::GetSystemInfo(&sysinfo);
+	return sysinfo.dwNumberOfProcessors;
+#endif
+}
+
+Event::Event(ResetType _reset /*= ResetType::Manual*/, bool _initialState /*= false*/)
+{
+	m_event = ::CreateEvent(nullptr, _reset == ResetType::Manual, _initialState, nullptr);
+	KT_ASSERT(m_event);
+}
+
+Event::~Event()
+{
+	::CloseHandle(m_event);
+}
+
+void Event::Wait()
+{
+	::WaitForSingleObject(m_event, INFINITE);
+}
+
+void Event::Wait(uint32_t _waitMillis)
+{
+	::WaitForSingleObject(m_event, _waitMillis);
+}
+
+void Event::Signal()
+{
+	BOOL ok = ::SetEvent(m_event);
+	KT_UNUSED(ok);
+	KT_ASSERT(ok != 0);
+}
+
+void Event::Reset()
+{
+	BOOL ok = ::ResetEvent(m_event);
+	KT_UNUSED(ok);
+	KT_ASSERT(ok != 0);
+}
+
 }
 
