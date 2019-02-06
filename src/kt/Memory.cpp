@@ -112,7 +112,7 @@ void SetDefaultAllocator(IAllocator* _allocator)
 
 #if KT_OVERRIDE_NEW
 
-void* operator new[](std::size_t count, const std::nothrow_t&)
+void* operator new[](std::size_t count, const std::nothrow_t&) noexcept
 {
 	return kt::s_defaultAllocator->Alloc(count, KT_DEFAULT_ALIGN);
 }
@@ -127,12 +127,17 @@ void operator delete(void* ptr)
 	kt::s_defaultAllocator->Free(ptr);
 }
 
-void operator delete(void* ptr, const std::nothrow_t&)
+void operator delete(void* ptr, const std::nothrow_t&) noexcept
 {
 	kt::s_defaultAllocator->Free(ptr);
 }
 
-void operator delete[](void* ptr, const std::nothrow_t&)
+void operator delete(void* ptr, std::size_t sz)
+{
+	kt::s_defaultAllocator->Free(ptr, sz);
+}
+
+void operator delete[](void* ptr, const std::nothrow_t&) noexcept
 {
 	kt::s_defaultAllocator->Free(ptr);
 }
@@ -142,7 +147,12 @@ void operator delete[](void* ptr)
 	kt::s_defaultAllocator->Free(ptr);
 }
 
-void* operator new(std::size_t count, const std::nothrow_t&)
+void operator delete[](void* ptr, std::size_t sz)
+{
+	kt::s_defaultAllocator->Free(ptr, sz);
+}
+
+void* operator new(std::size_t count, const std::nothrow_t&) noexcept
 {
 	return kt::s_defaultAllocator->Alloc(count, KT_DEFAULT_ALIGN);
 }
@@ -151,5 +161,52 @@ void* operator new(std::size_t count)
 {
 	return kt::s_defaultAllocator->Alloc(count, KT_DEFAULT_ALIGN);
 }
+
+#if (defined(_HAS_ALIGNED_NEW) && _HAS_ALIGNED_NEW) || KT_CPP17
+void* operator new  (std::size_t count, std::align_val_t al)
+{
+	return kt::s_defaultAllocator->Alloc(count, (size_t)al);
+}
+
+void* operator new[](std::size_t count, std::align_val_t al)
+{
+	return kt::s_defaultAllocator->Alloc(count, (size_t)al);
+}
+
+void* operator new  (std::size_t count, std::align_val_t al, const std::nothrow_t&) noexcept
+{
+	return kt::s_defaultAllocator->Alloc(count, (size_t)al);
+}
+
+void* operator new[](std::size_t count, std::align_val_t al, const std::nothrow_t&) noexcept
+{
+	return kt::s_defaultAllocator->Alloc(count, (size_t)al);
+}
+
+void operator delete  (void* ptr, std::size_t sz, std::align_val_t al)
+{
+	KT_UNUSED(al);
+	kt::s_defaultAllocator->Free(ptr, sz);
+}
+
+void operator delete[](void* ptr, std::size_t sz, std::align_val_t al)
+{
+	KT_UNUSED(al);
+	kt::s_defaultAllocator->Free(ptr, sz);
+}
+
+void operator delete  (void* ptr, std::align_val_t al)
+{
+	KT_UNUSED(al);
+	kt::s_defaultAllocator->Free(ptr);
+}
+
+void operator delete[](void* ptr, std::align_val_t al)
+{
+	KT_UNUSED(al);
+	kt::s_defaultAllocator->Free(ptr);
+}
+
+#endif
 
 #endif

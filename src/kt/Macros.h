@@ -109,3 +109,5 @@ ScopeExit<T> MakeScopeExit(T _code) { return ScopeExit<T>(_code); }
 #endif
 
 #define KT_NO_COPY(_class) _class(_class const&) = delete; _class operator=(_class const& _other) = delete;
+
+#define KT_CPP17 (__cplusplus >= 201703L) 
