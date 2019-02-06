@@ -8,7 +8,8 @@
 namespace kt
 {
 
-static CrtAllocator s_defaultAllocator;
+static CrtAllocator s_defaultCrtAllocator;
+static IAllocator* s_defaultAllocator = &s_defaultCrtAllocator;
 
 uintptr_t AlignValue(uintptr_t const _size, uintptr_t const _align)
 {
@@ -84,22 +85,67 @@ void CrtAllocator::Free(void* _ptr)
 
 void* Malloc(size_t const _s, size_t const _align)
 {
-	return s_defaultAllocator.Alloc(_s, _align);
+	return s_defaultAllocator->Alloc(_s, _align);
 }
 
 void Free(void* _p)
 {
-	s_defaultAllocator.Free(_p);
+	s_defaultAllocator->Free(_p);
 }
 
 void* Realloc(void* _p, size_t const _sz)
 {
-	return s_defaultAllocator.ReAlloc(_p, _sz);
+	return s_defaultAllocator->ReAlloc(_p, _sz);
 }
 
 IAllocator* GetDefaultAllocator()
 {
-	return &s_defaultAllocator;
+	return s_defaultAllocator;
 }
 
+void SetDefaultAllocator(IAllocator* _allocator)
+{
+	s_defaultAllocator = _allocator;
+}
+
+}
+
+void* operator new[](std::size_t count, const std::nothrow_t&)
+{
+	return kt::s_defaultAllocator->Alloc(count, KT_DEFAULT_ALIGN);
+}
+
+void* operator new[](std::size_t count)
+{
+	return kt::s_defaultAllocator->Alloc(count, KT_DEFAULT_ALIGN);
+}
+
+void operator delete(void* ptr)
+{
+	kt::s_defaultAllocator->Free(ptr);
+}
+
+void operator delete(void* ptr, const std::nothrow_t&)
+{
+	kt::s_defaultAllocator->Free(ptr);
+}
+
+void operator delete[](void* ptr, const std::nothrow_t&)
+{
+	kt::s_defaultAllocator->Free(ptr);
+}
+
+void operator delete[](void* ptr)
+{
+	kt::s_defaultAllocator->Free(ptr);
+}
+
+void* operator new(std::size_t count, const std::nothrow_t&)
+{
+	return kt::s_defaultAllocator->Alloc(count, KT_DEFAULT_ALIGN);
+}
+
+void* operator new(std::size_t count)
+{
+	return kt::s_defaultAllocator->Alloc(count, KT_DEFAULT_ALIGN);
 }

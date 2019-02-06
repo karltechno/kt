@@ -14,6 +14,7 @@ SET(COMPILED_SOURCES
     "Timer.cpp"
     "SIMD.cpp"
     "Sort.cpp"
+    "Memory.cpp"
 )
 
 

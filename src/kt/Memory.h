@@ -12,6 +12,21 @@
 
 #define KT_DEFAULT_ALIGN (16)
 
+#define KT_OVERRIDE_NEW (1)
+
+#if KT_OVERRIDE_NEW
+
+void* operator new  (std::size_t count);
+void* operator new[](std::size_t count);
+void* operator new  (std::size_t count, const std::nothrow_t&);
+void* operator new[](std::size_t count, const std::nothrow_t&);
+
+void operator delete  (void* ptr);
+void operator delete[](void* ptr);
+void operator delete  (void* ptr, const std::nothrow_t&);
+void operator delete[](void* ptr, const std::nothrow_t&);
+#endif
+
 namespace kt
 {
 
@@ -41,6 +56,7 @@ struct CrtAllocator : IAllocator
 };
 
 IAllocator* GetDefaultAllocator();
+void SetDefaultAllocator(IAllocator* _allocator);
 
 template <typename T, typename... Args>
 T* New(IAllocator* _allocator, Args... _args);
