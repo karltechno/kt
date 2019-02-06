@@ -27,6 +27,27 @@ TEST_CASE("CAS test", "")
 	}
 
 	{
+		uint16_t v = 2;
+		uint16_t const ret = kt::AtomicCompareAndSwap16(&v, 2u, 3u);
+		CHECK(ret == 2);
+		CHECK(v == 3);
+	}
+
+	{
+		uint32_t v = 2;
+		uint32_t const ret = kt::AtomicCompareAndSwap32(&v, 2u, 3u);
+		CHECK(ret == 2);
+		CHECK(v == 3);
+	}
+
+	{
+		uint64_t v = 2;
+		uint64_t const ret = kt::AtomicCompareAndSwap64(&v, 2u, 3u);
+		CHECK(ret == 2);
+		CHECK(v == 3);
+	}
+
+	{
 		void* v = (void*)0x2;
 
 		void* ret = kt::AtomicCompareAndSwapPtr(&v, (void*)0x2, (void*)0x3);
@@ -60,6 +81,30 @@ TEST_CASE("Fetch add test", "")
 		CHECK(kt::AtomicFetchAdd64(&val, 13) == 0);
 		CHECK(val == 13);
 	}
+
+	{
+		uint8_t val = 0;
+		CHECK(kt::AtomicFetchAdd8(&val, 13) == 0);
+		CHECK(val == 13);
+	}
+
+	{
+		uint16_t val = 0;
+		CHECK(kt::AtomicFetchAdd16(&val, 12) == 0);
+		CHECK(val == 12);
+	}
+
+	{
+		uint32_t val = 0;
+		CHECK(kt::AtomicFetchAdd32(&val, 13) == 0);
+		CHECK(val == 13);
+	}
+
+	{
+		uint64_t val = 0;
+		CHECK(kt::AtomicFetchAdd64(&val, 13) == 0);
+		CHECK(val == 13);
+	}
 }
 
 TEST_CASE("Store test", "")
@@ -87,6 +132,30 @@ TEST_CASE("Store test", "")
 		kt::AtomicStore64(&val, 13);
 		CHECK(val == 13);
 	}
+
+	{
+		uint8_t val = 0;
+		kt::AtomicStore8(&val, 13);
+		CHECK(val == 13);
+	}
+
+	{
+		uint16_t val = 0;
+		kt::AtomicStore16(&val, 13);
+		CHECK(val == 13);
+	}
+
+	{
+		uint32_t val = 0;
+		kt::AtomicStore32(&val, 13);
+		CHECK(val == 13);
+	}
+
+	{
+		uint64_t val = 0;
+		kt::AtomicStore64(&val, 13);
+		CHECK(val == 13);
+	}
 }
 
 TEST_CASE("Load test", "")
@@ -108,6 +177,26 @@ TEST_CASE("Load test", "")
 
 	{
 		int64_t val = 34;
+		CHECK(kt::AtomicLoad64(&val) == 34);
+	}
+	
+	{
+		uint8_t val = 34;
+		CHECK(kt::AtomicLoad8(&val) == 34);
+	}
+
+	{
+		uint16_t val = 34;
+		CHECK(kt::AtomicLoad16(&val) == 34);
+	}
+
+	{
+		uint32_t val = 34;
+		CHECK(kt::AtomicLoad32(&val) == 34);
+	}
+
+	{
+		uint64_t val = 34;
 		CHECK(kt::AtomicLoad64(&val) == 34);
 	}
 }
