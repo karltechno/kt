@@ -24,6 +24,16 @@ private:
 #endif
 };
 
+template <typename T>
+struct ScopedLock
+{
+	ScopedLock(T& _t) : lk(_t) { lk.Lock(); }
+	~ScopedLock() { lk.Unlock(); }
+
+private:
+	T& lk;
+};
+
 class Thread
 {
 public:
