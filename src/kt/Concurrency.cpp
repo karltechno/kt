@@ -180,7 +180,7 @@ void Thread::InternalRun(Thread* _pThis)
 {
 	_pThis->GetEntry()(_pThis);
 	AcquireReleaseFence();
-	AtomicStore8((int8_t*)&_pThis->m_running, 0);
+	AtomicStore8(&_pThis->m_running, 0);
 }
 
 uint32_t LogicalCoreCount()
@@ -192,39 +192,42 @@ uint32_t LogicalCoreCount()
 #endif
 }
 
-Event::Event(ResetType _reset /*= ResetType::Manual*/, bool _initialState /*= false*/)
+Event::Event(bool _initialState /*= false*/)
 {
-	m_event = ::CreateEvent(nullptr, _reset == ResetType::Manual, _initialState, nullptr);
+#if KT_PLATFORM_WINDOWS
+	m_event = ::CreateEvent(nullptr, FALSE, _initialState, nullptr);
 	KT_ASSERT(m_event);
+#endif
 }
 
 Event::~Event()
 {
-	::CloseHandle(m_event);
-}
-
-void Event::Wait()
-{
-	::WaitForSingleObject(m_event, INFINITE);
+#if KT_PLATFORM_WINDOWS
+	BOOL ok = ::CloseHandle(m_event);
+	KT_UNUSED(ok);
+	KT_ASSERT(ok != 0);
+#endif
 }
 
 void Event::Wait(uint32_t _waitMillis)
 {
+#if KT_PLATFORM_WINDOWS
 	::WaitForSingleObject(m_event, _waitMillis);
+#endif
 }
 
 void Event::Signal()
 {
+#if KT_PLATFORM_WINDOWS
 	BOOL ok = ::SetEvent(m_event);
 	KT_UNUSED(ok);
 	KT_ASSERT(ok != 0);
+#endif
 }
 
-void Event::Reset()
+void Event::ManualReset()
 {
-	BOOL ok = ::ResetEvent(m_event);
-	KT_UNUSED(ok);
-	KT_ASSERT(ok != 0);
+
 }
 
 }

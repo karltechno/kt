@@ -27,6 +27,8 @@ private:
 template <typename T>
 struct ScopedLock
 {
+	KT_NO_COPY(ScopedLock);
+
 	ScopedLock(T& _t) : lk(_t) { lk.Lock(); }
 	~ScopedLock() { lk.Unlock(); }
 
@@ -58,22 +60,21 @@ private:
 	Entry m_entry = nullptr;
 	void* m_userData = nullptr;
 	void* m_threadHandle = nullptr;
-	bool m_running = false;
+	uint8_t m_running = false;
 };
 
 class Event
 {
 public:
-	enum class ResetType { Manual, Auto };
+	KT_NO_COPY(Event);
 
-	Event(ResetType _reset = ResetType::Manual, bool _initialState = false);
+	Event(bool _initialState = false);
 	~Event();
 
-	void Wait();
-	void Wait(uint32_t _waitMillis);
-
+	void Wait(uint32_t _waitMillis = 0xFFFFFFFF);
 	void Signal();
-	void Reset();
+
+	void ManualReset();
 
 private:
 	void* m_event;
