@@ -117,6 +117,7 @@ void Swap(T& _a, T& _b)
 
 }
 
+#undef KT_ENUM_CLASS_FLAG_OPERATORS
 #define KT_ENUM_CLASS_FLAG_OPERATORS(_enumType) \
 inline _enumType operator | (_enumType a, _enumType b) throw() { return _enumType(((__underlying_type(_enumType))a) | ((__underlying_type(_enumType))b)); } \
 inline _enumType &operator |= (_enumType &a, _enumType b) throw() { return (_enumType &)(((__underlying_type(_enumType) &)a) |= ((__underlying_type(_enumType))b)); } \
