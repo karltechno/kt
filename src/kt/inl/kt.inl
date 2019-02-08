@@ -1,8 +1,6 @@
 #pragma once
-#include <utility>
-
 #if KT_COMPILER_MSVC
-#	include <intrin.h>
+	#include <intrin.h>
 #endif
 
 namespace kt
@@ -118,3 +116,12 @@ void Swap(T& _a, T& _b)
 }
 
 }
+
+#define KT_ENUM_CLASS_FLAG_OPERATORS(_enumType) \
+inline _enumType operator | (_enumType a, _enumType b) throw() { return _enumType(((__underlying_type(_enumType))a) | ((__underlying_type(_enumType))b)); } \
+inline _enumType &operator |= (_enumType &a, _enumType b) throw() { return (_enumType &)(((__underlying_type(_enumType) &)a) |= ((__underlying_type(_enumType))b)); } \
+inline _enumType operator & (_enumType a, _enumType b) throw() { return _enumType(((__underlying_type(_enumType))a) & ((__underlying_type(_enumType))b)); } \
+inline _enumType &operator &= (_enumType &a, _enumType b) throw() { return (_enumType &)(((__underlying_type(_enumType) &)a) &= ((__underlying_type(_enumType))b)); } \
+inline _enumType operator ~ (_enumType a) throw() { return _enumType(~((__underlying_type(_enumType))a)); } \
+inline _enumType operator ^ (_enumType a, _enumType b) throw() { return _enumType(((__underlying_type(_enumType))a) ^ ((__underlying_type(_enumType))b)); } \
+inline _enumType &operator ^= (_enumType &a, _enumType b) throw() { return (_enumType &)(((__underlying_type(_enumType) &)a) ^= ((__underlying_type(_enumType))b)); } \

@@ -54,4 +54,7 @@ auto end(T&& _container) -> decltype(_container.End()) { return _container.End()
 
 }
 
+// Define enum class bitwise flag operators. 
+#define KT_ENUM_CLASS_FLAG_OPERATORS(_enum)
+
 #include "inl/kt.inl"
