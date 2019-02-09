@@ -26,7 +26,7 @@ set(HEADER_SOURCES
     "HandleAllocator.h"
     "Hash.h"
     "HashMap.h"
-    "IntegerMap.h"
+    "HashMapDeclare.h"
     "kt.h"
     "LinearAllocator.h"
     "Logging.h"

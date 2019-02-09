@@ -27,6 +27,14 @@ KT_FORCEINLINE uint32_t XXHash_32(void const* _p, uint32_t _sz);
 // 64 bit XXHash.
 KT_FORCEINLINE uint64_t XXHash_64(void const* _p, uint32_t _sz);
 
+// Case sensitive string hash.
+uint32_t StringHash(char const* _str);
+uint32_t StringHash(kt::StringView const& _str);
+
+// Insensitive string hash.
+uint32_t StringHashI(char const* _str);
+uint32_t StringHashI(kt::StringView const& _str);
+
 struct XXHash_Incremental32
 {
 	XXHash_Incremental32();

@@ -35,7 +35,7 @@ struct UnorderedMap_XXHash
 
 KT_BENCH(ktHashMap_Insertion_u32_u32, 128)
 {
-	kt::HashMap<uint32_t, uint32_t> map;
+	kt::IntegerKeyMap<uint32_t, uint32_t> map;
 
 	kt::ScopedBenchStart bench;
 
@@ -209,7 +209,7 @@ KT_BENCH(HashMapSTL_Lookup_string_u32, 128)
 
 KT_BENCH(ktHashMap_Lookup_u32_u32, 128)
 {
-	kt::HashMap<uint32_t, uint32_t> map;
+	kt::IntegerKeyMap<uint32_t, uint32_t> map;
 
 	map.Reserve(1024 * 8);
 
@@ -254,7 +254,7 @@ struct HashMap_BigData
 
 KT_BENCH(ktHashMap_Lookup_u32_BigData, 128)
 {
-	kt::HashMap<uint32_t, HashMap_BigData> map;
+	kt::IntegerKeyMap<uint32_t, HashMap_BigData> map;
 
 	map.Reserve(1024 * 8);
 
@@ -327,7 +327,7 @@ KT_BENCH(STLVector_Iterate_4096_u32, 256)
 
 KT_BENCH(ktHashMap_Lookup_Failed_u32_u32, 128)
 {
-	kt::HashMap<uint32_t, uint32_t> map;
+	kt::IntegerKeyMap<uint32_t, uint32_t> map;
 
 	uint32_t const num = 2048;
 
@@ -412,7 +412,7 @@ KT_BENCH(ktHashMap_Remove_string_u32, 128)
 
 KT_BENCH(HashMapSTL_Remove_string_u32, 128)
 {
-	std::unordered_map<char const*, uint32_t, UnorderedMap_StringHash> map;
+	std::unordered_map<char const*, uint32_t, UnorderedMap_StringHash, StrCmpFunctor> map;
 	uint32_t const NUM_STRINGS = 4096 * 4;
 
 	char* strings = (char*)kt::Malloc((NUM_STRINGS * 129));

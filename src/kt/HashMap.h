@@ -2,75 +2,10 @@
 #include "kt.h"
 #include "Memory.h"
 #include "Hash.h"
-#include "HashMap.h"
+#include "HashMapDeclare.h"
 
 namespace kt
 {
-
-template <typename T>
-struct HashMap_KeyOps
-{
-	using HashType = uint32_t;
-	static_assert(KT_IS_POD(T), "HashMap_KeyOps should be specialized for non-POD types.");
-
-	static bool Equal(T const& _lhs, T const& _rhs)
-	{
-		return _lhs == _rhs;
-	}
-
-	static HashType Hash(T const& _key)
-	{
-		return XXHash_32(&_key, sizeof(T));
-	}
-};
-
-template <>
-struct HashMap_KeyOps<char const*>
-{
-	using HashType = uint32_t;
-
-	static bool Equal(char const* _lhs, char const* _rhs)
-	{
-		return StrCmp(_lhs, _rhs) == 0;
-	}
-
-	static HashType Hash(char const* _key)
-	{
-		return XXHash_32(_key, StrLen(_key));
-	}
-};
-
-template <>
-struct HashMap_KeyOps<StringView>
-{
-	using HashType = uint32_t;
-
-	static bool Equal(StringView const& _lhs, StringView const& _rhs)
-	{
-		return _lhs == _rhs;
-	}
-
-	static HashType Hash(StringView const& _view)
-	{
-		return XXHash_32(_view.Data(), _view.Size());
-	}
-};
-
-template <uint32_t T_Size>
-struct HashMap_KeyOps<StaticString<T_Size>>
-{
-	using HashType = uint32_t;
-
-	static bool Equal(StaticString<T_Size> const& _lhs, StaticString<T_Size> const& _rhs)
-	{
-		return _lhs == _rhs;
-	}
-
-	static HashType Hash(StaticString<T_Size> const& _str)
-	{
-		return XXHash_32(_str.Data(), _str.Size());
-	}
-};
 
 
 // A linear probing/closed addressing hashtable. Uses round robin hashing.
