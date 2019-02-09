@@ -10,7 +10,6 @@ SET(COMPILED_SOURCES
     "Math.cpp"
     "String.cpp"
     "TestMain.cpp"
-    "ArrayHashMap.cpp"
     "Timer.cpp"
     "SIMD.cpp"
     "Sort.cpp"

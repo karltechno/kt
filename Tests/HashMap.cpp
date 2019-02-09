@@ -20,11 +20,11 @@ TEST_CASE("HashMap Copy", "")
 	}
 	kt::HashMap<uint32_t, uint32_t> mapCopy = map.MakeCopy();
 
-	REQUIRE(mapCopy.Size() == map.Size());
+	CHECK(mapCopy.Size() == map.Size());
 
 	for (uint32_t i = 0; i < num; ++i)
 	{
-		REQUIRE(mapCopy.Find(i) != mapCopy.End());
+		CHECK(mapCopy.Find(i) != mapCopy.End());
 	}
 }
 
@@ -45,11 +45,11 @@ TEST_CASE("HashMap operator=", "")
 	mapCopy[2] = 4;
 	mapCopy = map.MakeCopy();
 
-	REQUIRE(mapCopy.Size() == map.Size());
+	CHECK(mapCopy.Size() == map.Size());
 
 	for (uint32_t i = 0; i < num; ++i)
 	{
-		REQUIRE(mapCopy.Find(i) != mapCopy.End());
+		CHECK(mapCopy.Find(i) != mapCopy.End());
 	}
 }
 
@@ -67,12 +67,12 @@ TEST_CASE("HashMap move", "")
 	}
 	kt::HashMap<uint32_t, uint32_t> mapCopy(std::move(map));
 
-	REQUIRE(mapCopy.Size() == num);
-	REQUIRE(map.Size() == 0);
+	CHECK(mapCopy.Size() == num);
+	CHECK(map.Size() == 0);
 
 	for (uint32_t i = 0; i < num; ++i)
 	{
-		REQUIRE(mapCopy.Find(i) != mapCopy.End());
+		CHECK(mapCopy.Find(i) != mapCopy.End());
 	}
 }
 
@@ -92,12 +92,12 @@ TEST_CASE("HashMap operator=&&", "")
 	mapCopy[2] = 4;
 	mapCopy = std::move(map);
 
-	REQUIRE(mapCopy.Size() == num);
-	REQUIRE(map.Size() == 0);
+	CHECK(mapCopy.Size() == num);
+	CHECK(map.Size() == 0);
 
 	for (uint32_t i = 0; i < num; ++i)
 	{
-		REQUIRE(mapCopy.Find(i) != mapCopy.End());
+		CHECK(mapCopy.Find(i) != mapCopy.End());
 	}
 }
 
@@ -114,18 +114,18 @@ TEST_CASE("HashMap leak test 1", "")
 		map.Insert(i, sPtr);
 	}
 
-	REQUIRE((uint32_t)sPtr.use_count() == map.Size() + 1);
+	CHECK((uint32_t)sPtr.use_count() == map.Size() + 1);
 
 	uint32_t useCount = (uint32_t)sPtr.use_count();
 
 	for (kt::HashMap<uint32_t, std::shared_ptr<int>>::Iterator it = map.Begin(); it != map.End(); )
 	{
 		it = map.Erase(it);
-		REQUIRE((uint32_t)sPtr.use_count() == --useCount);
+		CHECK((uint32_t)sPtr.use_count() == --useCount);
 	}
 
 	sPtr.reset();
-	REQUIRE(weak.lock() == nullptr);
+	CHECK(weak.lock() == nullptr);
 
 }
 
@@ -142,16 +142,16 @@ TEST_CASE("HashMap leak test 2", "")
 		map.Insert(i, sPtr);
 	}
 
-	REQUIRE((uint32_t)sPtr.use_count() == map.Size() + 1u);
+	CHECK((uint32_t)sPtr.use_count() == map.Size() + 1u);
 
 	{
 		kt::HashMap<uint32_t, std::shared_ptr<int>> map2(std::move(map));
 
-		REQUIRE((uint32_t)sPtr.use_count() == map2.Size() + 1);
+		CHECK((uint32_t)sPtr.use_count() == map2.Size() + 1);
 	}
 
 	sPtr.reset();
-	REQUIRE(weak.lock() == nullptr);
+	CHECK(weak.lock() == nullptr);
 }
 
 
@@ -175,7 +175,7 @@ TEST_CASE("HashMap Deletetion Test 1", "")
 	{
 		auto it = map.Find(i);
 		REQUIRE(it != map.End());
-		REQUIRE((*it).m_val == i * 2);
+		CHECK((*it).m_val == i * 2);
 	}
 
 	for (uint32_t i = 0; i < num; ++i)
@@ -184,12 +184,12 @@ TEST_CASE("HashMap Deletetion Test 1", "")
 
 		auto it = map.Find(idx);
 		REQUIRE(it != map.End());
-		REQUIRE((*it).m_val == idx * 2);
+		CHECK((*it).m_val == idx * 2);
 
 		map.Erase(it);
 	}
 
-	REQUIRE(map.Size() == 0);
+	CHECK(map.Size() == 0);
 }
 
 
@@ -228,7 +228,7 @@ TEST_CASE("HashMap string lookup 1", "")
 		char const* str = strings + 129 * i;
 		kt::HashMap<char const*, uint8_t>::ConstIterator it = map.Find(str);
 		REQUIRE(it != map.End());
-		REQUIRE(it->m_val == it->m_key[str[0] % 128]);
+		CHECK(it->m_val == it->m_key[str[0] % 128]);
 		map.Erase(it);
 	}
 }
@@ -251,13 +251,13 @@ TEST_CASE("Hash map iteration test 1", "")
 	for (kt::HashMap<uint32_t, uint32_t>::ConstIterator it = map.Begin(); it != map.End(); ++it)
 	{
 		REQUIRE(it->m_key == it->m_val);
-		REQUIRE(found[it->m_key] == false);
+		CHECK(found[it->m_key] == false);
 		found[it->m_key] = true;
 	}
 
 	for (uint32_t i = 0; i < num; ++i)
 	{
-		REQUIRE(found[i] == true);
+		CHECK(found[i] == true);
 	}
 }
 
@@ -277,7 +277,7 @@ TEST_CASE("Hash map invalid key lookup", "")
 	for (uint32_t i = 0; i < num; ++i)
 	{
 		REQUIRE(map.Find(i) != map.End());
-		REQUIRE(map.Find(i + num) == map.End());
+		CHECK(map.Find(i + num) == map.End());
 	}
 
 	kt::HashMap<uint32_t, uint32_t> copy = map.MakeCopy();
@@ -285,7 +285,7 @@ TEST_CASE("Hash map invalid key lookup", "")
 	for (uint32_t i = 0; i < num; ++i)
 	{
 		REQUIRE(copy.Find(i) != copy.End());
-		REQUIRE(copy.Find(i + num) == copy.End());
+		CHECK(copy.Find(i + num) == copy.End());
 	}
 }
 
@@ -298,16 +298,16 @@ TEST_CASE("Hash map operator[]", "")
 	kt::HashMap<kt::StringView, uint32_t>::Iterator it = map.Find("Hello");
 
 	REQUIRE(it != map.End());
-	REQUIRE(it->m_key == "Hello");
-	REQUIRE(it->m_val == 5);
+	CHECK(it->m_key == "Hello");
+	CHECK(it->m_val == 5);
 
 	map.Insert("cats", 3);
 
 	it = map.Find("cats");
 
 	REQUIRE(it != map.End());
-	REQUIRE(it->m_key == "cats");
-	REQUIRE(it->m_val == 3);
+	CHECK(it->m_key == "cats");
+	CHECK(it->m_val == 3);
 
 	map["cats"] = 23;
 
@@ -315,7 +315,7 @@ TEST_CASE("Hash map operator[]", "")
 
 
 	REQUIRE(it != map.End());
-	REQUIRE(it->m_key == "cats");
-	REQUIRE(it->m_val == 23);
+	CHECK(it->m_key == "cats");
+	CHECK(it->m_val == 23);
 
 }

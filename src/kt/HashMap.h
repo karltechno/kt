@@ -2,6 +2,7 @@
 #include "kt.h"
 #include "Memory.h"
 #include "Hash.h"
+#include "HashMap.h"
 
 namespace kt
 {
@@ -9,24 +10,24 @@ namespace kt
 template <typename T>
 struct HashMap_KeyOps
 {
-	typedef uint64_t HashType;
+	using HashType = uint32_t;
 	static_assert(KT_IS_POD(T), "HashMap_KeyOps should be specialized for non-POD types.");
 
 	static bool Equal(T const& _lhs, T const& _rhs)
 	{
 		return _lhs == _rhs;
 	}
-	
+
 	static HashType Hash(T const& _key)
 	{
-		return XXHash_64(&_key, sizeof(T));
+		return XXHash_32(&_key, sizeof(T));
 	}
 };
 
 template <>
 struct HashMap_KeyOps<char const*>
 {
-	typedef uint64_t HashType;
+	using HashType = uint32_t;
 
 	static bool Equal(char const* _lhs, char const* _rhs)
 	{
@@ -35,14 +36,14 @@ struct HashMap_KeyOps<char const*>
 
 	static HashType Hash(char const* _key)
 	{
-		return XXHash_64(_key, StrLen(_key));
+		return XXHash_32(_key, StrLen(_key));
 	}
 };
 
 template <>
 struct HashMap_KeyOps<StringView>
 {
-	typedef uint64_t HashType; 
+	using HashType = uint32_t;
 
 	static bool Equal(StringView const& _lhs, StringView const& _rhs)
 	{
@@ -51,14 +52,14 @@ struct HashMap_KeyOps<StringView>
 
 	static HashType Hash(StringView const& _view)
 	{
-		return XXHash_64(_view.Data(), _view.Size());
+		return XXHash_32(_view.Data(), _view.Size());
 	}
 };
 
 template <uint32_t T_Size>
 struct HashMap_KeyOps<StaticString<T_Size>>
 {
-	typedef uint64_t HashType;
+	using HashType = uint32_t;
 
 	static bool Equal(StaticString<T_Size> const& _lhs, StaticString<T_Size> const& _rhs)
 	{
@@ -67,12 +68,12 @@ struct HashMap_KeyOps<StaticString<T_Size>>
 
 	static HashType Hash(StaticString<T_Size> const& _str)
 	{
-		return XXHash_64(_str.Data(), _str.Size());
+		return XXHash_32(_str.Data(), _str.Size());
 	}
 };
 
+
 // A linear probing/closed addressing hashtable. Uses round robin hashing.
-// Performance is decent - but could benefit from some further optimisations. Particularly memory layout.
 template <typename T_Key, typename T_Value, typename T_KeyOps = HashMap_KeyOps<T_Key>>
 class HashMap
 {
@@ -82,13 +83,13 @@ public:
 
 	static constexpr float c_maxLoadFactor = 0.75f;
 
-	typedef T_Value ValueType;
-	typedef T_Key KeyType;
-	typedef uint32_t IndexType;
-	typedef T_KeyOps KeyOps;
-	typedef typename KeyOps::HashType HashType;
+	using ValueType = T_Value;;
+	using KeyType = T_Key;
+	using IndexType = uint32_t;
+	using KeyOps = T_KeyOps;
+	using HashType = typename KeyOps::HashType;
 
-	typedef HashMap<T_Key, T_Value, T_KeyOps> HashMapType;
+	using HashMapType = HashMap<T_Key, T_Value, T_KeyOps>;
 
 	struct KvPair
 	{
@@ -211,32 +212,28 @@ public:
 	// The internal allocator.
 	IAllocator* GetAllocator() const { return m_allocator; }
 
-	// Set the hashmaps allocator. If it is the same, do nothing, else copy the current contents with the new allocator.
+	// Set the HashMaps allocator. If it is the same, do nothing, else copy the current contents with the new allocator.
 	void SetAllocator(IAllocator* _allocator);
 
 private:
 	static constexpr uint32_t c_defaultCapacity = 16u;
 	static constexpr uint32_t c_invalidIndex = UINT32_MAX;
 
-	struct InternalEntry
-	{
-		static constexpr int8_t s_maxProbeDist = 127;
-
-		bool IsEmpty() const { return m_probeDist == -1; }
-		void SetEmpty() { m_probeDist = -1; }
-		void SetProbeDist(uint8_t const _dist) { KT_ASSERT(_dist <= s_maxProbeDist); m_probeDist = _dist; }
-		int8_t GetProbeDist() const { return m_probeDist; }
-
-		int8_t m_probeDist;
-		KvPair m_kvPair;
-	};
-
-
 	IAllocator* m_allocator;
 	
-	InternalEntry* m_entries = nullptr;
-	uint32_t m_size = 0;
-	uint32_t m_capacity = 0;
+	struct MapData
+	{
+		void* m_ptr = nullptr;
+		uint32_t m_capacity = 0;
+		uint32_t m_size = 0;
+
+		HashType* HashPtr() const;
+		KvPair* KvPairPtr() const;
+
+	} m_data;
+
+	static MapData AllocMapData(IAllocator* _allocator, uint32_t _capacity);
+	static void FreeMapData(MapData& _data, IAllocator* _allocator);
 
 	bool IsIndexValid(IndexType const _idx) const;
 
@@ -244,7 +241,7 @@ private:
 
 	void GrowCapacityAndRehash(uint32_t const newCap = 0u);
 
-	IndexType InsertInternal(HashType const _hash, T_Key& _key, T_Value& _val);
+	IndexType InsertInternal(HashType const _hash, T_Key& _key, T_Value& _val, bool _setValIfAlreadyInMap = true);
 
 	IndexType RemoveIndex(IndexType const _idx);
 
@@ -258,6 +255,7 @@ private:
 	IndexType GetNextIndex(IndexType const _idx) const;
 	IndexType FirstFreeIndex() const;
 };
+
 
 }
 

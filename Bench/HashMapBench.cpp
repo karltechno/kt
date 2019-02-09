@@ -7,7 +7,6 @@
 #include "kt/Array.h"
 #include <vector>
 #include "kt/Strings.h"
-#include "kt/ArrayHashMap.h"
 
 struct StrCmpFunctor
 {
@@ -21,7 +20,7 @@ struct UnorderedMap_StringHash
 {
 	std::size_t operator()(char const* _str) const
 	{
-		return kt::XXHash_64(_str, kt::StrLen(_str));
+		return kt::XXHash_32(_str, kt::StrLen(_str));
 	}
 };
 
@@ -30,7 +29,7 @@ struct UnorderedMap_XXHash
 {
 	std::size_t operator()(T const& _t) const
 	{
-		return kt::XXHash_64(&_t, sizeof(T));
+		return kt::XXHash_32(&_t, sizeof(T));
 	}
 };
 
@@ -272,27 +271,6 @@ KT_BENCH(ktHashMap_Lookup_u32_BigData, 128)
 		KT_UNUSED(it);
 	}
 }
-
-KT_BENCH(ktArrayHashMap_Lookup_u32_BigData, 128)
-{
-	kt::ArrayHashMap<uint32_t, HashMap_BigData> map;
-
-	map.Reserve(1024 * 8);
-
-	for (uint32_t i = 0; i < 1024 * 8; ++i)
-	{
-		map.Insert(i * 2 + 1, HashMap_BigData{});
-	}
-
-	kt::ScopedBenchStart bench;
-
-	for (uint32_t i = 0; i < 1024 * 8; ++i)
-	{
-		auto it = map.FindKeyIt(i * 2 + 1);
-		KT_UNUSED(it);
-	}
-}
-
 
 KT_BENCH(HashMapSTL_Lookup_u32_BigData, 128)
 {
