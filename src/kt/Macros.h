@@ -104,17 +104,22 @@ ScopeExit<T> MakeScopeExit(T _code) { return ScopeExit<T>(_code); }
 	#if KT_CPP17
 		#define KT_FALLTHROUGH [[fallthrough]]
 	#else
-		#define KT_FALLTHROUGH
+		#define KT_FALLTHROUGH __fallthrough
 	#endif
 
 #elif (KT_COMPILER_GCC || KT_COMPILER_CLANG)
 	#define KT_FORCEINLINE inline __attribute__((__always_inline__))
 	#define KT_ALIGNAS(_align) alignas(_align)
 	#define KT_ALIGNOF(_align) alignof(_align)
-	#define KT_FALLTHROUGH 
+
+	#if KT_CPP17
+		#define KT_FALLTHROUGH [[fallthrough]]
+	#else
+		#define KT_FALLTHROUGH
+	#endif
+
 #else
 	#error Not implemented.
 #endif
 
 #define KT_NO_COPY(_class) _class(_class const&) = delete; _class operator=(_class const& _other) = delete;
-
