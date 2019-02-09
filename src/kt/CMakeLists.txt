@@ -17,13 +17,69 @@ set(EXTERNAL_SOURCES
     # "External/xxhash.c" add toggle for inlining?
 )
 
-file(GLOB HEADER_SOURCES "*.h")
+set(HEADER_SOURCES
+    "AABB.h"
+    "Array.h"
+    "Concurrency.h"
+    "File.h"
+    "FilePath.h"
+    "HandleAllocator.h"
+    "Hash.h"
+    "HashMap.h"
+    "IntegerMap.h"
+    "kt.h"
+    "LinearAllocator.h"
+    "Logging.h"
+    "Macros.h"
+    "Mat2.h"
+    "Mat3.h"
+    "Mat4.h"
+    "MathUtil.h"
+    "Memory.h"
+    "Platform.h"
+    "Quat.h"
+    "Random.h"
+    "Serialization.h"
+    "SIMD.h"
+    "Sort.h"
+    "Strings.h"
+    "Timer.h"
+    "Vec2.h"
+    "Vec3.h"
+    "Vec4.h"
+)
 
 if(MSVC)
-    file(GLOB NATVIS_SOURCES "*.natvis")
+    set(NATVIS_SOURCES
+        "kt.natvis"
+    )
 endif()
 
-file(GLOB INL_SOURCES "inl/*.inl")
+set(INL_SOURCES
+    "inl/AABB.inl"
+    "inl/Array.inl"
+    "inl/AtomicImpl_GCC.inl"
+    "inl/AtomicImpl_Generic.inl"
+    "inl/AtomicImpl_MSVC.inl"
+    "inl/Hash.inl"
+    "inl/HashMap.inl"
+    "inl/kt.inl"
+    "inl/LinearAllocator.inl"
+    "inl/Mat2.inl"
+    "inl/Mat3.inl"
+    "inl/Mat4.inl"
+    "inl/MathUtil.inl"
+    "inl/Memory.inl"
+    "inl/Quat.inl"
+    "inl/Random.inl"
+    "inl/SIMD.inl"
+    "inl/SIMD_SSE.inl"
+    "inl/Sort.inl"
+    "inl/Strings.inl"
+    "inl/Vec2.inl"
+    "inl/Vec3.inl"
+    "inl/Vec4.inl"
+)
 
 source_group("inl" FILES ${INL_SOURCES})
 source_group("Source" FILES ${COMPILED_SOURCES} ${NATVIS_SOURCES} ${HEADER_SOURCES})
