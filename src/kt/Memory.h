@@ -2,7 +2,8 @@
 #include "kt.h"
 
 #include <malloc.h>
-#include <stddef.h>
+#include <cstddef>
+#include <new>
 
 #if KT_PLATFORM_POSIX
 	#include <alloca.h>
@@ -12,7 +13,9 @@
 
 #define KT_DEFAULT_ALIGN (16)
 
-#define KT_OVERRIDE_NEW (1)
+#ifndef KT_OVERRIDE_NEW
+	#define KT_OVERRIDE_NEW (1)
+#endif
 
 #if KT_OVERRIDE_NEW
 

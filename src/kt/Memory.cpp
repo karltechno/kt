@@ -8,8 +8,16 @@
 namespace kt
 {
 
+#if KT_COMPILER_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4073)
+#pragma init_seg(lib) 
+#pragma warning(pop)
+#endif
+
 static CrtAllocator s_defaultCrtAllocator;
 static IAllocator* s_defaultAllocator = &s_defaultCrtAllocator;
+
 
 uintptr_t AlignValue(uintptr_t const _size, uintptr_t const _align)
 {
