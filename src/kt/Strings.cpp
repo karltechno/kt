@@ -54,6 +54,41 @@ int32_t StrCmp(char const* _lhs, char const* _rhs)
 	return ::strcmp(_lhs, _rhs);
 }
 
+int32_t StrCmpI(char const* _lhs, char const* _rhs)
+{
+	return ::_strcmpi(_lhs, _rhs);
+}
+
+int32_t StrCmpI(StringView const& _lhs, StringView const& _rhs)
+{
+	int32_t i = 0;
+	int32_t end = kt::Min(_lhs.m_size, _rhs.m_size);
+
+	char const* p0 = _lhs.m_ptr;
+	char const* p1 = _lhs.m_ptr;
+
+	for (; i < end; ++i)
+	{
+		char c0 = *p0++;
+		c0 = (c0 >= 'A' && c0 <= 'Z') ? (c0 | 0x20) : c0;
+
+		char c1 = *p1++;
+		c1 = (c1 >= 'A' && c1 <= 'Z') ? (c1 | 0x20) : c1;
+
+		if (c0 != c1)
+		{
+			return c1 > c0;
+		}
+	}
+
+	if (_lhs.m_size != _rhs.m_size)
+	{
+		return _lhs.m_size > _rhs.m_size ? 1 : -1;
+	}
+
+	return 0;
+}
+
 uint32_t StrLen(char const* _str)
 {
 	return (uint32_t)::strlen(_str);

@@ -159,6 +159,12 @@ uint32_t StringFormat(char(&buff)[SizeT], char const* _fmt, ...);
 // String Compare
 int32_t StrCmp(char const* _lhs, char const* _rhs);
 
+// String Compare case insensitive.
+int32_t StrCmpI(char const* _lhs, char const* _rhs);
+
+// String Compare case insensitive.
+int32_t StrCmpI(kt::StringView const& _lhs, kt::StringView const& _rhs);
+
 // String compare up to N chars from both strings.
 int32_t StrNCmp(char const* _lhs, char const* _rhs, uint32_t const _max);
 
