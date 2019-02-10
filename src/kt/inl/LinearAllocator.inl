@@ -1,6 +1,6 @@
 #pragma once
-#include "LinearAllocator.h"
-#include "Concurrency.h"
+#include "../LinearAllocator.h"
+#include "../Concurrency.h"
 
 namespace kt
 {
