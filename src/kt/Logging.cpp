@@ -60,18 +60,6 @@ static void LogImpl(LogLevel const _level, char const* _fmt, va_list _list)
 	buff[allocSz - 1] = '\0';
 	buff[allocSz - 2] = '\n';
 
-	if (s_defaultLogSinks[(uint32_t)DefaultLogSink::DebugOutput])
-	{
-#if KT_COMPILER_MSVC
-		::OutputDebugStringA(buff);
-#endif
-	}
-
-	if (s_defaultLogSinks[(uint32_t)DefaultLogSink::Console])
-	{
-		::puts(buff);
-	}
-
 	if (s_numUserLogs)
 	{
 		s_userLogMutex.Lock();
@@ -81,6 +69,20 @@ static void LogImpl(LogLevel const _level, char const* _fmt, va_list _list)
 		{
 			s_userLogs[i].m_cb(s_userLogs[i].m_user, _level, buff);
 		}
+	}
+
+	if (s_defaultLogSinks[(uint32_t)DefaultLogSink::DebugOutput])
+	{
+#if KT_COMPILER_MSVC
+		::OutputDebugStringA(buff);
+#endif
+	}
+
+	if (s_defaultLogSinks[(uint32_t)DefaultLogSink::Console])
+	{
+		// Remove new line for console. 
+		buff[allocSz - 2] = '\0';
+		::puts(buff);
 	}
 }
 
