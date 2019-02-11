@@ -10,6 +10,7 @@ set(COMPILED_SOURCES
     "Strings.cpp"
     "Timer.cpp"
     "HandleAllocator.cpp"
+    "StackTrace.cpp"
 )
 
 set(EXTERNAL_SOURCES
@@ -42,6 +43,7 @@ set(HEADER_SOURCES
     "Serialization.h"
     "SIMD.h"
     "Sort.h"
+    "StackTrace.h"
     "Strings.h"
     "Timer.h"
     "Vec2.h"

@@ -13,6 +13,9 @@ class StaticString
 public:
 	static_assert(SizeT > 0, "String size must be greater than 0.");
 
+	static uint32_t const c_capacity = SizeT;
+	static uint32_t const c_capacityNoNull = SizeT - 1;
+
 	StaticString();
 
 	// Char* constructor.
@@ -93,8 +96,6 @@ public:
 	void Resize(uint32_t const _sz);
 
 private:
-	static const uint32_t c_capacityNoNull = SizeT - 1;
-
 	char m_data[SizeT];
 	uint32_t m_size = 0u;
 };
