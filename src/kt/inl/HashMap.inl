@@ -254,6 +254,13 @@ inline uint32_t HashMap<T_Key, T_Value, T_KeyOps>::Size() const
 	return m_data.m_size;
 }
 
+
+template <typename T_Key, typename T_Value, typename T_KeyOps /*= HashMap_KeyOps<T_Key>*/>
+bool HashMap<T_Key, T_Value, T_KeyOps>::Empty() const
+{
+	return m_data.m_size == 0;
+}
+
 template<typename T_Key, typename T_Value, typename T_KeyOps>
 inline uint32_t HashMap<T_Key, T_Value, T_KeyOps>::Capacity() const
 {
@@ -514,7 +521,7 @@ void HashMap<T_Key, T_Value, T_KeyOps>::SetAllocator(IAllocator* _allocator)
 {
 	if (m_allocator != _allocator)
 	{
-		if (!m_size)
+		if (!m_data.m_size)
 		{
 			Release();
 			m_allocator = _allocator;

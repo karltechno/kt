@@ -129,6 +129,9 @@ public:
 	// Current HashMap capacity.
 	uint32_t Capacity() const;
 
+	// Is this HashMap empty?
+	bool Empty() const;
+
 	// Reserve space for _sz elements.
 	void Reserve(uint32_t const _sz);
 
