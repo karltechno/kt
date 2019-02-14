@@ -33,7 +33,7 @@ struct UnorderedMap_XXHash
 	}
 };
 
-KT_BENCH(ktHashMap_Insertion_u32_u32, 128)
+KT_BENCH(HashMap_Insertion_u32_u32, kt, 128)
 {
 	kt::IntegerKeyMap<uint32_t, uint32_t> map;
 
@@ -46,7 +46,7 @@ KT_BENCH(ktHashMap_Insertion_u32_u32, 128)
 }
 
 
-KT_BENCH(HashMapSTL_Insertion_u32_u32, 128)
+KT_BENCH(HashMap_Insertion_u32_u32, STL, 128)
 {
 	std::unordered_map<uint32_t, uint32_t, UnorderedMap_XXHash<uint32_t>> map;
 	kt::ScopedBenchStart bench;
@@ -58,7 +58,7 @@ KT_BENCH(HashMapSTL_Insertion_u32_u32, 128)
 }
 
 
-KT_BENCH(ktHashMap_Insertion_string_u32, 128)
+KT_BENCH(HashMap_Insertion_string_u32, kt, 128)
 {
 	kt::HashMap<char const*, uint32_t> map;
 
@@ -91,7 +91,7 @@ KT_BENCH(ktHashMap_Insertion_string_u32, 128)
 }
 
 
-KT_BENCH(HashMapSTL_Insertion_string_u32, 128)
+KT_BENCH(HashMap_Insertion_string_u32, STL, 128)
 {
 	std::unordered_map<char const*, uint32_t, UnorderedMap_StringHash, StrCmpFunctor> map;
 	uint32_t const NUM_STRINGS = 4096 * 4;
@@ -123,7 +123,7 @@ KT_BENCH(HashMapSTL_Insertion_string_u32, 128)
 }
 
 
-KT_BENCH(ktHashMap_Lookup_string_u32, 128)
+KT_BENCH(HashMap_Lookup_string_u32, kt, 128)
 {
 	kt::HashMap<char const*, uint32_t> map;
 
@@ -166,7 +166,7 @@ KT_BENCH(ktHashMap_Lookup_string_u32, 128)
 }
 
 
-KT_BENCH(HashMapSTL_Lookup_string_u32, 128)
+KT_BENCH(HashMap_Lookup_string_u32, STL, 128)
 {
 	std::unordered_map<char const*, uint32_t, UnorderedMap_StringHash, StrCmpFunctor> map;
 
@@ -207,7 +207,7 @@ KT_BENCH(HashMapSTL_Lookup_string_u32, 128)
 }
 
 
-KT_BENCH(ktHashMap_Lookup_u32_u32, 128)
+KT_BENCH(HashMap_Lookup_u32_u32, kt, 128)
 {
 	kt::IntegerKeyMap<uint32_t, uint32_t> map;
 
@@ -228,7 +228,7 @@ KT_BENCH(ktHashMap_Lookup_u32_u32, 128)
 }
 
 
-KT_BENCH(HashMapSTL_Lookup_u32_u32, 128)
+KT_BENCH(HashMap_Lookup_u32_u32, STL, 128)
 {
 	std::unordered_map<uint32_t, uint32_t> map;
 	map.reserve(1024 * 8);
@@ -252,7 +252,7 @@ struct HashMap_BigData
 	char junk[1024];
 };
 
-KT_BENCH(ktHashMap_Lookup_u32_BigData, 128)
+KT_BENCH(HashMap_Lookup_u32_BigData, kt, 128)
 {
 	kt::IntegerKeyMap<uint32_t, HashMap_BigData> map;
 
@@ -272,7 +272,7 @@ KT_BENCH(ktHashMap_Lookup_u32_BigData, 128)
 	}
 }
 
-KT_BENCH(HashMapSTL_Lookup_u32_BigData, 128)
+KT_BENCH(HashMap_Lookup_u32_BigData, STL, 128)
 {
 	std::unordered_map<uint32_t, HashMap_BigData> map;
 	map.reserve(1024 * 8);
@@ -292,40 +292,7 @@ KT_BENCH(HashMapSTL_Lookup_u32_BigData, 128)
 }
 
 
-KT_BENCH(ktArray_Iterate_4096_u32, 256)
-{
-	kt::Array<uint32_t> arr;
-
-	for (uint32_t i = 0; i < 4096; ++i)
-	{
-		arr.PushBack(i);
-	}
-
-	kt::ScopedBenchStart bench;
-	for (kt::Array<uint32_t>::Iterator it = arr.Begin(); it != arr.End(); ++it)
-	{
-		*it = *it + 1;
-	}
-}
-
-KT_BENCH(STLVector_Iterate_4096_u32, 256)
-{
-	std::vector<uint32_t> arr;
-
-	for (uint32_t i = 0; i < 4096; ++i)
-	{
-		arr.push_back(i);
-	}
-
-	kt::ScopedBenchStart bench;
-	for (std::vector<uint32_t>::iterator it = arr.begin(); it != arr.end(); ++it)
-	{
-		*it = *it + 1;
-	}
-}
-
-
-KT_BENCH(ktHashMap_Lookup_Failed_u32_u32, 128)
+KT_BENCH(HashMap_Lookup_Failed_u32_u32, kt, 128)
 {
 	kt::IntegerKeyMap<uint32_t, uint32_t> map;
 
@@ -347,7 +314,7 @@ KT_BENCH(ktHashMap_Lookup_Failed_u32_u32, 128)
 	}
 }
 
-KT_BENCH(STLHashMap_Lookup_Failed_u32_u32, 128)
+KT_BENCH(HashMap_Lookup_Failed_u32_u32, STL, 128)
 {
 	std::unordered_map<uint32_t, uint32_t, std::hash<uint32_t>> map;
 
@@ -370,7 +337,7 @@ KT_BENCH(STLHashMap_Lookup_Failed_u32_u32, 128)
 }
 
 
-KT_BENCH(ktHashMap_Remove_string_u32, 128)
+KT_BENCH(HashMap_Remove_String_u32, kt, 128)
 {
 	kt::HashMap<char const*, uint32_t> map;
 
@@ -410,7 +377,7 @@ KT_BENCH(ktHashMap_Remove_string_u32, 128)
 }
 
 
-KT_BENCH(HashMapSTL_Remove_string_u32, 128)
+KT_BENCH(HashMap_Remove_String_u32, STL, 128)
 {
 	std::unordered_map<char const*, uint32_t, UnorderedMap_StringHash, StrCmpFunctor> map;
 	uint32_t const NUM_STRINGS = 4096 * 4;

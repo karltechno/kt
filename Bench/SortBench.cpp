@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-KT_BENCH(SortSTL_4096_u32, 512)
+KT_BENCH(Sort_4096_u32, STL, 512)
 {
 	uint32_t nums[4096];
 	kt::XorShift32 rnd;
@@ -17,7 +17,7 @@ KT_BENCH(SortSTL_4096_u32, 512)
 	std::sort(nums, nums + KT_ARRAY_COUNT(nums));
 }
 
-KT_BENCH(ktQSort_4096_u32, 512)
+KT_BENCH(Sort_4096_u32, ktQSort, 512)
 {
 	uint32_t nums[4096];
 	kt::XorShift32 rnd;
@@ -30,7 +30,7 @@ KT_BENCH(ktQSort_4096_u32, 512)
 	kt::QuickSort(nums, nums + KT_ARRAY_COUNT(nums));
 }
 
-KT_BENCH(ktRadixSort_4096_u32, 512)
+KT_BENCH(Sort_4096_u32, ktRadixSort, 512)
 {
 	uint32_t nums[4096];
 	uint32_t temp[4096];

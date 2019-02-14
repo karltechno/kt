@@ -2,9 +2,13 @@
 
 #include <kt/kt.h>
 #include <kt/Timer.h>
+#include <kt/Memory.h>
+#include <kt/Strings.h>
+#include <kt/Sort.h>
 #include "Bench.h"
 
 BenchEntry* g_benchList;
+uint32_t g_numBenches = 0;
 
 static kt::TimePoint g_thisIter;
 
@@ -33,18 +37,53 @@ int main(int argc, char** argv)
 {
 	KT_UNUSED2(argc, argv);
 
-	for (BenchEntry* entry = g_benchList; entry; entry = entry->m_next)
+	if (!g_numBenches)
 	{
-		printf("Running benchmark: %s for %u iterations.\n", entry->m_name, entry->m_numIters);
+		return 0;
+	}
+
+	BenchEntry** sortedEntries = (BenchEntry**)KT_ALLOCA(sizeof(BenchEntry*) * g_numBenches);
+
+	BenchEntry* head = g_benchList;
+
+	for (uint32_t i = 0; i < g_numBenches; ++i)
+	{
+		sortedEntries[i] = head;
+		head = head->m_next;
+	}
+
+	kt::QuickSort(sortedEntries, sortedEntries + g_numBenches,
+				  [](BenchEntry const* _lhs, BenchEntry const* _rhs) { return kt::StrCmp(_lhs->m_group, _rhs->m_group) < 0; });
+
+	char const* prevStr = nullptr;
+
+	for (uint32_t i = 0; i < g_numBenches; ++i)
+	{
+		BenchEntry const* entry = sortedEntries[i];
+
+		if (!prevStr || kt::StrCmpI(entry->m_group, prevStr) != 0)
+		{
+			if (prevStr)
+			{
+				printf("\n\n");
+			}
+
+			prevStr = entry->m_group;
+			printf("----------------------------------------------------------\n");
+			printf("Benchmarking group: %s\n", entry->m_group);
+			printf("----------------------------------------------------------\n");
+		}
+
+		printf("%s for %u iterations:     ", entry->m_name, entry->m_numIters);
 		g_totalAccum = kt::Duration::Zero();
 		g_bestIter = kt::Duration::Max();
 		g_worstIter = kt::Duration::Zero();
-		for (uint32_t i = 0; i < entry->m_numIters; ++i)
+		for (uint32_t iter = 0; iter < entry->m_numIters; ++iter)
 		{
 			entry->m_fn();
 		}
 
 		double const avg = g_totalAccum.Microseconds() / (double)entry->m_numIters;
-		printf("Avg: %.2fus, worst: %.2fus, best: %.2fus\n\n", avg, g_worstIter.Microseconds(), g_bestIter.Microseconds());
+		printf("Avg: %.2fus, worst: %.2fus, best: %.2fus\n", avg, g_worstIter.Microseconds(), g_bestIter.Microseconds());
 	}
 }
