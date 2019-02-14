@@ -14,13 +14,13 @@
 namespace kt
 {
 
-static const uint32_t c_maxStackTraceFrames = 10u;
+static const uint32_t c_maxStackTraceFrames = 12u;
 
 struct StackTrace
 {
-	void Capture();
+	void Capture(uint32_t _skip = 0);
 
-	bool ResolveSymbol(uint32_t _idx, kt::String512& o_symbol, uint32_t* o_line = nullptr, kt::String512* o_file = nullptr);
+	bool ResolveSymbol(uint32_t _idx, kt::String512& o_symbol, uint32_t* o_line = nullptr, kt::String512* o_file = nullptr) const;
 
 	void* m_frames[c_maxStackTraceFrames] = {};
 };

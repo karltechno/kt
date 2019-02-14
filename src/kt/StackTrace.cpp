@@ -32,8 +32,6 @@ struct WindowsStackTraceStaticState
 	bool m_init = false;
 } s_state;
 
-static kt::Mutex s_dbgHelpMutex;
-
 #endif
 
 namespace kt
@@ -41,22 +39,21 @@ namespace kt
 
 
 
-void StackTrace::Capture()
+void StackTrace::Capture(uint32_t _skip)
 {
 	memset(m_frames, sizeof(m_frames), 0);
 
 #if KT_STACK_TRACE_ENABLED
 
 #if KT_PLATFORM_WINDOWS
-	kt::ScopedLock<kt::Mutex> mt(s_dbgHelpMutex);
-	::CaptureStackBackTrace(1, c_maxStackTraceFrames, m_frames, nullptr);
+	::CaptureStackBackTrace(1 + _skip, c_maxStackTraceFrames, m_frames, nullptr);
 #endif
 
 #endif
 }
 
 
-bool StackTrace::ResolveSymbol(uint32_t _idx, kt::String512& o_symbol, uint32_t* o_line, kt::String512* o_file)
+bool StackTrace::ResolveSymbol(uint32_t _idx, kt::String512& o_symbol, uint32_t* o_line, kt::String512* o_file) const
 {
 #if KT_STACK_TRACE_ENABLED
 
@@ -80,7 +77,6 @@ bool StackTrace::ResolveSymbol(uint32_t _idx, kt::String512& o_symbol, uint32_t*
 	
 	DWORD64 disp = 0;
 	HANDLE proc = ::GetCurrentProcess();
-	kt::ScopedLock<kt::Mutex> mt(s_dbgHelpMutex);
 
 	if (::SymFromAddr(proc, rip, &disp, psym))
 	{

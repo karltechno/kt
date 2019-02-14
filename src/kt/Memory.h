@@ -72,6 +72,7 @@ struct CrtAllocator : IAllocator
 	void* Alloc(size_t const _sz, size_t const _align) override;
 	void* ReAlloc(void* _ptr, size_t const _sz) override;
 	void Free(void* _ptr) override;
+	void Free(void* _ptr, size_t const _sz) override { KT_UNUSED(_sz); Free(_ptr); }
 };
 
 IAllocator* GetDefaultAllocator();
@@ -114,7 +115,6 @@ struct InplaceContainerAllocator : IAllocator
 	size_t m_used = 0;
 	KT_ALIGNAS(AlignT) char m_buff[StaticSizeT];
 };
-
 
 }
 
