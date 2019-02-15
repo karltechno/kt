@@ -61,9 +61,7 @@ endif()
 set(INL_SOURCES
     "inl/AABB.inl"
     "inl/Array.inl"
-    "inl/AtomicImpl_GCC.inl"
-    "inl/AtomicImpl_Generic.inl"
-    "inl/AtomicImpl_MSVC.inl"
+    "inl/Concurrency.inl"
     "inl/DebugAllocator.inl"
     "inl/Hash.inl"
     "inl/HashMap.inl"

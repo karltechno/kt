@@ -1,6 +1,7 @@
 #pragma once
 #include "kt.h"
 #include "Platform.h"
+#include <atomic>
 
 namespace kt
 {
@@ -60,7 +61,7 @@ private:
 	Entry m_entry = nullptr;
 	void* m_userData = nullptr;
 	void* m_threadHandle = nullptr;
-	uint8_t m_running = false;
+	std::atomic<uint32_t> m_running = false;
 };
 
 class Event
@@ -82,67 +83,11 @@ private:
 
 uint32_t LogicalCoreCount();
 
-KT_FORCEINLINE void AcquireFence();
-KT_FORCEINLINE void ReleaseFence();
-KT_FORCEINLINE void AcquireReleaseFence();
-KT_FORCEINLINE void MemoryFence();
-
-KT_FORCEINLINE int8_t  AtomicLoad8(int8_t const* _ptr);
-KT_FORCEINLINE int16_t AtomicLoad16(int16_t const* _ptr);
-KT_FORCEINLINE int32_t AtomicLoad32(int32_t const* _ptr);
-KT_FORCEINLINE int64_t AtomicLoad64(int64_t const* _ptr);
-
-KT_FORCEINLINE void AtomicStore8(int8_t* _ptr, int8_t _val);
-KT_FORCEINLINE void AtomicStore16(int16_t* _ptr, int16_t _val);
-KT_FORCEINLINE void AtomicStore32(int32_t* _ptr, int32_t _val);
-KT_FORCEINLINE void AtomicStore64(int64_t* _ptr, int64_t _val);
-
-KT_FORCEINLINE int8_t  AtomicFetchAdd8(int8_t* _ptr, int8_t _v);
-KT_FORCEINLINE int16_t AtomicFetchAdd16(int16_t* _ptr, int16_t _v);
-KT_FORCEINLINE int32_t AtomicFetchAdd32(int32_t* _ptr, int32_t _v);
-KT_FORCEINLINE int64_t AtomicFetchAdd64(int64_t* _ptr, int64_t _v);
-
-KT_FORCEINLINE int16_t AtomicCompareAndSwap16(int16_t* _ptr, int16_t _old, int16_t _new);
-KT_FORCEINLINE int32_t AtomicCompareAndSwap32(int32_t* _ptr, int32_t _old, int32_t _new);
-KT_FORCEINLINE int64_t AtomicCompareAndSwap64(int64_t* _ptr, int64_t _old, int64_t _new);
-
-KT_FORCEINLINE uint8_t  AtomicLoad8(uint8_t const* _ptr);
-KT_FORCEINLINE uint16_t AtomicLoad16(uint16_t const* _ptr);
-KT_FORCEINLINE uint32_t AtomicLoad32(uint32_t const* _ptr);
-KT_FORCEINLINE uint64_t AtomicLoad64(uint64_t const* _ptr);
-
-KT_FORCEINLINE void AtomicStore8(uint8_t* _ptr, uint8_t _val);
-KT_FORCEINLINE void AtomicStore16(uint16_t* _ptr, uint16_t _val);
-KT_FORCEINLINE void AtomicStore32(uint32_t* _ptr, uint32_t _val);
-KT_FORCEINLINE void AtomicStore64(uint64_t* _ptr, uint64_t _val);
-
-KT_FORCEINLINE uint8_t  AtomicFetchAdd8(uint8_t* _ptr, uint8_t _v);
-KT_FORCEINLINE uint16_t AtomicFetchAdd16(uint16_t* _ptr, uint16_t _v);
-KT_FORCEINLINE uint32_t AtomicFetchAdd32(uint32_t* _ptr, uint32_t _v);
-KT_FORCEINLINE uint64_t AtomicFetchAdd64(uint64_t* _ptr, uint64_t _v);
-
-KT_FORCEINLINE uint16_t AtomicCompareAndSwap16(uint16_t* _ptr, uint16_t _old, uint16_t _new);
-KT_FORCEINLINE uint32_t AtomicCompareAndSwap32(uint32_t* _ptr, uint32_t _old, uint32_t _new);
-KT_FORCEINLINE uint64_t AtomicCompareAndSwap64(uint64_t* _ptr, uint64_t _old, uint64_t _new);
-
+#if KT_ARCH_64BIT
 template <typename T>
-KT_FORCEINLINE T* AtomicCompareAndSwapPtr(T** _ptr, T* _old, T* _new);
-
-template <typename T>
-KT_FORCEINLINE T* AtomicLoadPtr(T* const* _ptr);
-
-template <typename T>
-KT_FORCEINLINE void AtomicStorePtr(T** _ptr, T* _val);
-
+bool AtomicCompareExchange128(T* _v, T* io_expAndOld, T const& _new);
+#endif
 
 }
 
-#if KT_COMPILER_MSVC
-	#include "inl/AtomicImpl_MSVC.inl"
-#elif (KT_COMPILER_GCC || KT_COMPILER_CLANG)
-	#include "inl/AtomicImpl_GCC.inl"
-#else
-	#error Not implemented.
-#endif
-
-#include "inl/AtomicImpl_Generic.inl"
+#include "inl/Concurrency.inl"

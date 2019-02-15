@@ -21,7 +21,7 @@ LinearAllocator<ThreadSafeT>::LinearAllocator(IAllocator* _backingAllocator, siz
 template <LinearAllocatorThreadSafety ThreadSafeT>
 LinearAllocator<ThreadSafeT>::~LinearAllocator()
 {
-	KT_ASSERT(m_curPtr == m_memBegin);
+	KT_ASSERT(m_curPtr.load() == (uintptr_t)m_memBegin);
 	if (m_allocator)
 	{
 		m_allocator->Free(m_memBegin);
@@ -34,12 +34,8 @@ void* LinearAllocator<ThreadSafeT>::Alloc(size_t const _sz, size_t const _align)
 	if (ThreadSafeT == LinearAllocatorThreadSafety::ThreadSafeAlloc)
 	{
 		size_t const worstCaseAllocSize = AlignValue(_sz, _align);
-		
-#if KT_ARCH_64BIT
-		void* const allocBegin = (void*)kt::AtomicFetchAdd64((int64_t*)&m_curPtr, worstCaseAllocSize);
-#else
-		void* const allocBegin = (void*)kt::AtomicFetchAdd32((int32_t*)&m_curPtr, worstCaseAllocSize);
-#endif
+		void* allocBegin = (void*)std::atomic_fetch_add_explicit(&m_curPtr, worstCaseAllocSize, std::memory_order_relaxed);
+
 		uintptr_t const alignedPtr = AlignValue((uintptr_t)allocBegin, _align);
 		if (alignedPtr + _sz > (uintptr_t)m_memEnd)
 		{
@@ -50,7 +46,9 @@ void* LinearAllocator<ThreadSafeT>::Alloc(size_t const _sz, size_t const _align)
 	}
 	else
 	{
-		uintptr_t const current = (uintptr_t)m_curPtr;
+		// Todo: re-evaluate use of std::atomic with thread safety template (although this is just plain mov's on x86).
+
+		uintptr_t const current = (uintptr_t)std::atomic_load_explicit(&m_curPtr, std::memory_order_relaxed);
 
 		uintptr_t const aligned = AlignValue(current, _align);
 		if (aligned + _sz > (uintptr_t)m_memEnd)
@@ -58,8 +56,7 @@ void* LinearAllocator<ThreadSafeT>::Alloc(size_t const _sz, size_t const _align)
 			// Cant satisfy this request.
 			return nullptr;
 		}
-
-		m_curPtr = (void*)(aligned + _sz);
+		std::atomic_store_explicit(&m_curPtr, aligned + _sz, std::memory_order_relaxed);
 		return (void*)aligned;
 	}
 }
@@ -81,14 +78,14 @@ void LinearAllocator<ThreadSafeT>::Init(IAllocator* _allocator, size_t const _me
 
 	m_allocator = _allocator;
 	m_memBegin = _allocator->Alloc(_memSize);
-	m_curPtr = m_memBegin;
+	std::atomic_store_explicit(&m_curPtr, (uintptr_t)m_memBegin, std::memory_order_relaxed);
 	m_memEnd = (void*)((uintptr_t)m_memBegin + _memSize);
 }
 
 template <LinearAllocatorThreadSafety ThreadSafeT>
 void LinearAllocator<ThreadSafeT>::Reset()
 {
-	m_curPtr = m_memBegin;
+	std::atomic_store_explicit(&m_curPtr, (uintptr_t)m_memBegin, std::memory_order_relaxed);
 }
 
 template <LinearAllocatorThreadSafety ThreadSafeT>

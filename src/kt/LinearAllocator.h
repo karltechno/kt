@@ -1,6 +1,7 @@
 #pragma once
 #include "kt.h"
 #include "Memory.h"
+#include "Concurrency.h"
 
 namespace kt
 {
@@ -53,7 +54,7 @@ private:
 	void* m_memBegin = nullptr;
 	void* m_memEnd = nullptr;
 
-	void* m_curPtr = nullptr;
+	std::atomic<uintptr_t> m_curPtr = 0;
 
 	IAllocator* m_allocator = nullptr;
 };

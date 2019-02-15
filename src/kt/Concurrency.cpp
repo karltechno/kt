@@ -152,7 +152,7 @@ void Thread::Run(Entry _fn, void* _userData, char const* _name)
 
 bool Thread::IsRunning() const
 {
-	return AtomicLoad8((int8_t*)&m_running) != 0;
+	return std::atomic_load_explicit(&m_running, std::memory_order_relaxed);
 }
 
 void Thread::Join()
@@ -179,8 +179,7 @@ void Thread::Join()
 void Thread::InternalRun(Thread* _pThis)
 {
 	_pThis->GetEntry()(_pThis);
-	AcquireReleaseFence();
-	AtomicStore8(&_pThis->m_running, 0);
+	std::atomic_store_explicit(&_pThis->m_running, 0, std::memory_order_release);
 }
 
 uint32_t LogicalCoreCount()
