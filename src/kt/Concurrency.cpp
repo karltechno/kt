@@ -178,6 +178,7 @@ void Thread::Join()
 
 void Thread::InternalRun(Thread* _pThis)
 {
+	std::atomic_store_explicit(&_pThis->m_running, 1, std::memory_order_relaxed);
 	_pThis->GetEntry()(_pThis);
 	std::atomic_store_explicit(&_pThis->m_running, 0, std::memory_order_release);
 }
