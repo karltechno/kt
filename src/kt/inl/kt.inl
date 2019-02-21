@@ -6,14 +6,13 @@
 namespace kt
 {
 
-KT_FORCEINLINE uint32_t Ctnlz(uint32_t const _v)
+KT_FORCEINLINE uint32_t Cntlz(uint32_t const _v)
 {
 #if KT_COMPILER_GCC || KT_COMPILER_CLANG
 	return __builtin_clz(_v);
 #elif KT_COMPILER_MSVC
 	unsigned long idx;
-	::_BitScanReverse(&idx, _v);
-	return 31 - idx;
+	return ::_BitScanReverse(&idx, _v) ? (31 - idx) : 32;
 #else
 	#error Not implemented
 #endif
@@ -23,7 +22,7 @@ KT_FORCEINLINE uint64_t Cntlz(uint64_t const _v)
 {
 #if KT_COMPILER_GCC || KT_COMPILER_CLANG
 	return __builtin_clzll(_v);
-#elif (KT_COMPILER_MSVC && KT_ARCH_64BIT)
+#elif KT_COMPILER_MSVC && KT_ARCH_64BIT
 	unsigned long idx;
 	return ::_BitScanReverse64(&idx, _v) ? (63 - idx) : 64;
 #else

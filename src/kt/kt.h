@@ -12,6 +12,7 @@ template <typename T>
 KT_FORCEINLINE bool IsPow2(T const _v);
 
 // Returns the next power of two after the specified value. Undefined for 2^32.
+// This is the true 'next' power of two, ie 2^n return 2^(n+1). So use NextPow2(N-1) for rounding to nearest pow2.
 KT_FORCEINLINE uint32_t NextPow2(uint32_t const _v);
 
 // Generic Min.
@@ -33,7 +34,7 @@ void Swap(T& _a, T& _b);
 // Bit ops
 
 // Count leading zeroes.
-KT_FORCEINLINE uint32_t Ctnlz(uint32_t const _v);
+KT_FORCEINLINE uint32_t Cntlz(uint32_t const _v);
 KT_FORCEINLINE uint64_t Cntlz(uint64_t const _v);
 
 // Count trailing zeroes.
