@@ -43,7 +43,7 @@ size_t GetPointerAlignment(void* _ptr)
 
 void* CrtAllocator::Alloc(size_t const _sz, size_t const _align)
 {
-#if KT_COMPILER_MSVC
+#if KT_PLATFORM_WINDOWS
 	return ::_aligned_malloc(_sz, Min<size_t>(KT_DEFAULT_ALIGN, _align));
 #else
 	void* pmem = nullptr;
@@ -84,7 +84,7 @@ void* CrtAllocator::ReAlloc(void* _ptr, size_t const _sz)
 
 void CrtAllocator::Free(void* _ptr)
 {
-#if KT_COMPILER_MSVC
+#if KT_PLATFORM_WINDOWS
 	return ::_aligned_free(_ptr);
 #else
 	::free(_ptr);
@@ -130,7 +130,7 @@ void* operator new[](std::size_t count)
 	return kt::s_defaultAllocator->Alloc(count, KT_DEFAULT_ALIGN);
 }
 
-void operator delete(void* ptr)
+void operator delete(void* ptr) noexcept
 {
 	kt::s_defaultAllocator->Free(ptr);
 }
@@ -140,7 +140,7 @@ void operator delete(void* ptr, const std::nothrow_t&) noexcept
 	kt::s_defaultAllocator->Free(ptr);
 }
 
-void operator delete(void* ptr, std::size_t sz)
+void operator delete(void* ptr, std::size_t sz) noexcept
 {
 	kt::s_defaultAllocator->Free(ptr, sz);
 }
@@ -150,12 +150,12 @@ void operator delete[](void* ptr, const std::nothrow_t&) noexcept
 	kt::s_defaultAllocator->Free(ptr);
 }
 
-void operator delete[](void* ptr)
+void operator delete[](void* ptr) noexcept
 {
 	kt::s_defaultAllocator->Free(ptr);
 }
 
-void operator delete[](void* ptr, std::size_t sz)
+void operator delete[](void* ptr, std::size_t sz) noexcept
 {
 	kt::s_defaultAllocator->Free(ptr, sz);
 }

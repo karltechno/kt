@@ -24,12 +24,12 @@ void* operator new[](std::size_t count);
 void* operator new  (std::size_t count, const std::nothrow_t&) noexcept;
 void* operator new[](std::size_t count, const std::nothrow_t&) noexcept;
 
-void operator delete  (void* ptr);
-void operator delete[](void* ptr);
+void operator delete  (void* ptr) noexcept;
+void operator delete[](void* ptr) noexcept;
 void operator delete  (void* ptr, const std::nothrow_t&) noexcept;
 void operator delete[](void* ptr, const std::nothrow_t&) noexcept;
-void operator delete  (void* ptr, std::size_t sz);
-void operator delete[](void* ptr, std::size_t sz);
+void operator delete  (void* ptr, std::size_t sz) noexcept;
+void operator delete[](void* ptr, std::size_t sz) noexcept;
 
 #if (defined(_HAS_ALIGNED_NEW) && _HAS_ALIGNED_NEW) || KT_CPP17
 void* operator new  (std::size_t count, std::align_val_t al);
@@ -84,11 +84,6 @@ T* New(IAllocator* _allocator, Args... _args);
 template <typename T>
 void Delete(IAllocator* _allocator, T*& _ptr);
 
-template <typename T, typename... Args>
-T* New(Args... _args);
-
-template <typename T>
-void Delete(T*& _ptr);
 
 void* Malloc(size_t const _s, size_t const _align = KT_DEFAULT_ALIGN);
 void Free(void* _p);
