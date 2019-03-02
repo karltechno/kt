@@ -2,33 +2,41 @@
 
 #include <kt/SIMD.h>
 
+kt::SIMD_Float4 AlmostEqual_Absolute(kt::SIMD_Float4 const _lhs, kt::SIMD_Float4 const _rhs, float const _absErr)
+{
+	return kt::SIMD_Abs(_lhs - _rhs) <= kt::SIMD_Splat(_absErr);
+}
+
+float constexpr c_smallAbsError = 0.0001f;
+
 TEST_CASE("SIMD Basic ops", "[SIMD]")
 {
 	{
 		kt::SIMD_Float4 const f1 = kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f);
-		kt:: SIMD_Float4 const f2 = kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f);
-		kt:: SIMD_Float4 const mask = kt::SIMD_CmpEq(f1 + f2, kt::SIMD_Load4(2.0f, 4.0f, 6.0f, 8.0f));
+		kt::SIMD_Float4 const f2 = kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f);
+		kt::SIMD_Float4 const mask = AlmostEqual_Absolute(f1 + f2, kt::SIMD_Load4(2.0f, 4.0f, 6.0f, 8.0f), c_smallAbsError);
 		REQUIRE(kt::SIMD_AllTrue(mask));
 	}
 
 	{
-		kt:: SIMD_Float4 const f1 = kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f);
-		kt:: SIMD_Float4 const f2 = kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f);
-		kt:: SIMD_Float4 const mask = kt::SIMD_CmpEq(f1 - f2, kt::SIMD_Splat(0.0f));
+		kt::SIMD_Float4 const f1 = kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f);
+		kt::SIMD_Float4 const f2 = kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f);
+		kt:: SIMD_Float4 const mask = AlmostEqual_Absolute(f1 - f2, kt::SIMD_Splat(0.0f), c_smallAbsError);
 		REQUIRE(kt::SIMD_AllTrue(mask));
 	}
 
 	{
-		kt:: SIMD_Float4 const f1 = kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f);
-		kt:: SIMD_Float4 const f2 = kt::SIMD_Splat(2.0f);
-		kt:: SIMD_Float4 const mask = kt::SIMD_CmpEq(f1 * f2, kt::SIMD_Load4(2.0f, 4.0f, 6.0f, 8.0f));
+		kt::SIMD_Float4 const f1 = kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f);
+		kt::SIMD_Float4 const f2 = kt::SIMD_Splat(2.0f);
+		kt::SIMD_Float4 const mask = AlmostEqual_Absolute(f1 * f2, kt::SIMD_Load4(2.0f, 4.0f, 6.0f, 8.0f), c_smallAbsError);
 		REQUIRE(kt::SIMD_AllTrue(mask));
 	}
 
 	{
-		kt:: SIMD_Float4 const f1 = kt::SIMD_Load4(2.0f, 4.0f, 6.0f, 8.0f);
-		kt:: SIMD_Float4 const f2 = kt::SIMD_Splat(2.0f);
-		kt:: SIMD_Float4 const mask = kt::SIMD_CmpEq(f1 / f2, kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f));
+		kt::SIMD_Float4 const f1 = kt::SIMD_Load4(2.0f, 4.0f, 6.0f, 8.0f);
+		kt::SIMD_Float4 const f2 = kt::SIMD_Splat(2.0f);
+		kt::SIMD_Float4 const div = f1 / f2;
+		kt::SIMD_Float4 const mask = AlmostEqual_Absolute(div, kt::SIMD_Load4(1.0f, 2.0f, 3.0f, 4.0f), c_smallAbsError);
 		REQUIRE(kt::SIMD_AllTrue(mask));
 	}
 }
