@@ -41,7 +41,7 @@ namespace kt
 
 void StackTrace::Capture(uint32_t _skip)
 {
-	memset(m_frames, sizeof(m_frames), 0);
+	memset(m_frames, 0, sizeof(m_frames));
 
 #if KT_STACK_TRACE_ENABLED
 
@@ -69,10 +69,10 @@ bool StackTrace::ResolveSymbol(uint32_t _idx, kt::String512& o_symbol, uint32_t*
 
 	DWORD64 rip = (DWORD64)m_frames[_idx];
 
-	KT_ALIGNAS(KT_ALIGNOF(IMAGEHLP_SYMBOL64)) char buff[sizeof SYMBOL_INFO + o_symbol.c_capacity];
+	KT_ALIGNAS(KT_ALIGNOF(IMAGEHLP_SYMBOL64)) char buff[sizeof(SYMBOL_INFO) + o_symbol.c_capacity];
 
 	SYMBOL_INFO* psym = (SYMBOL_INFO*)buff;
-	psym->SizeOfStruct = sizeof SYMBOL_INFO;
+	psym->SizeOfStruct = sizeof(SYMBOL_INFO);
 	psym->MaxNameLen = o_symbol.c_capacity;
 	
 	DWORD64 disp = 0;
@@ -88,7 +88,7 @@ bool StackTrace::ResolveSymbol(uint32_t _idx, kt::String512& o_symbol, uint32_t*
 		}
 
 		IMAGEHLP_LINE64 line = {};
-		line.SizeOfStruct = sizeof IMAGEHLP_LINE64;
+		line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
 		DWORD disp2 = 0;
 		if (::SymGetLineFromAddr64(proc, rip, &disp2, &line))
