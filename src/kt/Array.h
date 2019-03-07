@@ -136,7 +136,7 @@ public:
 		: Array<T>(&m_allocator) // Array is initialized before m_allocator, but it does not allocate until m_allocator is initialized.
 		, m_allocator(_fallback)
 	{
-		Reserve(InplaceCapacityT);
+		Array<T>::Reserve(InplaceCapacityT);
 	}
 
 private:
