@@ -74,6 +74,7 @@ set(INL_SOURCES
     "inl/Memory.inl"
     "inl/Quat.inl"
     "inl/Random.inl"
+    "inl/Serialization.inl"
     "inl/SIMD.inl"
     "inl/SIMD_SSE.inl"
     "inl/Sort.inl"

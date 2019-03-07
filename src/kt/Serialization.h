@@ -1,33 +1,139 @@
 #pragma once
-#include <kt/kt.h>
+#include "kt.h"
+#include "Array.h"
+#include "HashMap.h"
 
 namespace kt
 {
 
-struct ISerializationReader
+struct IReader
 {
-	virtual ~ISerializationReader() {}
+	virtual ~IReader() {}
 
-	virtual bool ReadBytes(void* o_buff, uint64_t const _bytesToRead, uint64_t* o_bytesRead = nullptr) = 0;
+	virtual bool ReadBytes(void* o_buff, uint64_t const i_bytesToRead, uint64_t* o_bytesRead = nullptr) = 0;
 
 	template <typename T>
-	bool Read(T* o_t)
+	bool Read(T& o_t)
 	{
-		return ReadBytes(o_t, sizeof(T));
+		return ReadBytes(&o_t, sizeof(T));
 	}
 };
 
-struct ISerializationWriter
+struct IWriter
 {
-	virtual ~ISerializationWriter() {}
+	virtual ~IWriter() {}
 
-	virtual bool WriteBytes(void const* o_buff, uint64_t const _bytesToWrite, uint64_t* o_bytesWritten = nullptr) = 0;
+	virtual bool WriteBytes(void const* i_buff, uint64_t const i_bytesToWrite, uint64_t* o_bytesWritten = nullptr) = 0;
 
 	template <typename T>
-	bool Write(T const* o_t)
+	bool Write(T const& o_t)
 	{
-		return WriteBytes(o_t, sizeof(T));
+		return WriteBytes(&o_t, sizeof(T));
 	}
 };
+
+struct FileWriter : IWriter
+{
+	FileWriter(FILE* _file)
+		: m_file(_file)
+	{}
+
+	bool WriteBytes(void const* i_buff, uint64_t const _bytesToWrite, uint64_t* o_bytesWritten = nullptr) override;
+
+	FILE* m_file = nullptr;
+};
+
+struct FileReader : IReader
+{
+	FileReader(FILE* _file)
+		: m_file(_file)
+	{}
+
+	bool ReadBytes(void* o_buff, uint64_t const i_bytesToRead, uint64_t* o_bytesRead = nullptr) override;
+
+	FILE* m_file = nullptr;
+};
+
+struct StaticMemoryBlockWriter : IWriter
+{
+	StaticMemoryBlockWriter(void* _buff, size_t _sz)
+		: m_buff(_buff)
+		, m_size(_sz)
+		, m_pos(0)
+	{}
+
+	bool WriteBytes(void const* i_buff, uint64_t const _bytesToWrite, uint64_t* o_bytesWritten = nullptr) override;
+
+	void* m_buff = nullptr;
+	uint64_t m_size = 0;
+	uint64_t m_pos = 0;
+};
+
+struct StaticMemoryBlockReader : IReader
+{
+	StaticMemoryBlockReader(void* _buff, size_t _sz)
+		: m_buff(_buff)
+		, m_size(_sz)
+		, m_pos(0)
+	{}
+
+	bool ReadBytes(void* o_buff, uint64_t const i_bytesToRead, uint64_t* o_bytesRead = nullptr) override;
+
+	void* m_buff = nullptr;
+	uint64_t m_size = 0;
+	uint64_t m_pos = 0;
+};
+
+
+struct ISerializer
+{
+	enum class Mode : uint32_t
+	{
+		Write,
+		Read
+	};
+
+	ISerializer(IReader* _reader)
+		: m_mode(Mode::Read)
+		, m_reader(_reader)
+	{}
+
+	ISerializer(IWriter* _writer)
+		: m_mode(Mode::Write)
+		, m_writer(_writer)
+	{}
+
+	Mode SerializeMode() const { return m_mode; }
+
+	void SerializeBytes(void* _buff, uint64_t _sz)
+	{
+		bool const ok = m_mode == Mode::Write ? m_writer->WriteBytes(_buff, _sz) : m_reader->ReadBytes(_buff, _sz);
+		KT_UNUSED(ok);
+		KT_ASSERT(ok);
+	}
+
+private:
+	Mode m_mode;
+
+	union 
+	{
+		IReader* m_reader;
+		IWriter* m_writer;
+	};
+};
+
+template <typename T>
+void Serialize(ISerializer* _s, T& _t)
+{
+	_s->SerializeBytes(&_t, sizeof(T));
+}
+
+template <typename T>
+void Serialize(ISerializer* _s, kt::Array<T>& _t);
+
+template <typename K, typename V, typename KeyOps>
+void Serialize(ISerializer* _s, kt::HashMap<K, V, KeyOps>& _t);
 
 }
+
+#include "inl/Serialization.inl"

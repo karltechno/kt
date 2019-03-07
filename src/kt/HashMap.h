@@ -6,7 +6,7 @@
 
 namespace kt
 {
-
+struct ISerializer;
 
 // A linear probing/closed addressing hashtable. Uses round robin hashing.
 template <typename T_Key, typename T_Value, typename T_KeyOps = HashMap_KeyOps<T_Key>>
@@ -17,6 +17,8 @@ public:
 	KT_NO_COPY(HashMap);
 
 	static constexpr float c_maxLoadFactor = 0.75f;
+
+	friend void Serialize(ISerializer*, kt::HashMap<T_Key, T_Value, T_KeyOps>&);
 
 	using ValueType = T_Value;;
 	using KeyType = T_Key;
@@ -164,11 +166,11 @@ private:
 
 		HashType* HashPtr() const;
 		KvPair* KvPairPtr() const;
-
 	} m_data;
 
 	static MapData AllocMapData(IAllocator* _allocator, uint32_t _capacity);
 	static void FreeMapData(MapData& _data, IAllocator* _allocator);
+	static size_t AllocSizeForCapacity(uint32_t _capacity);
 
 	bool IsIndexValid(IndexType const _idx) const;
 

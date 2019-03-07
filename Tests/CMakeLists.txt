@@ -14,6 +14,7 @@ SET(COMPILED_SOURCES
     "SIMD.cpp"
     "Sort.cpp"
     "Memory.cpp"
+    "Serialization.cpp"
 )
 
 
