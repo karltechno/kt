@@ -56,6 +56,12 @@ TEST_CASE("Basic writer test", "[Serialization]")
 	}
 
 	CHECK(memcmp(blockA, blockB, sizeof(blockA)) == 0);
+
+	uint32_t dummy;
+	CHECK(!writer.Write(dummy));
+	uint64_t numWrite;
+	CHECK(!writer.WriteBytes(&dummy, sizeof(uint32_t), &numWrite));
+	CHECK(numWrite == 0);
 }
 
 TEST_CASE("Serialize array u32", "[Serialization]")
