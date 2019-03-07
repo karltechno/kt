@@ -68,6 +68,14 @@ ScopeExit<T> MakeScopeExit(T _code) { return ScopeExit<T>(_code); }
 
 }
 
+template <typename T>
+struct BitwiseCopyable
+{
+	static bool const val = false;
+};
+
+#define KT_BITWISE_COPYABLE(_t) template <> struct BitwiseCopyable<_t> { static bool const val = true; };  
+
 #define _KT_STRING_JOIN_2_(_x, _y) _x ## _y
 #define KT_STRING_JOIN(_x, _y) _KT_STRING_JOIN_2_(_x, _y)
 
@@ -86,10 +94,10 @@ ScopeExit<T> MakeScopeExit(T _code) { return ScopeExit<T>(_code); }
 #define KT_MACRO_BLOCK_END } while(0);
 
 #if (KT_COMPILER_MSVC || KT_COMPILER_CLANG || KT_COMPILER_GCC)
-	#define KT_HAS_TRIVIAL_COPY(_t) __has_trivial_copy(_t)
+	#define KT_HAS_TRIVIAL_COPY(_t) (__has_trivial_copy(_t) || BitwiseCopyable<_t>::val)
 	#define KT_IS_POD(_t) __is_pod(_t)
 	#define KT_HAS_TRIVIAL_DTOR(_t) __has_trivial_destructor(_t)
-	#define KT_HAS_TRIVIAL_CTOR(_t) __has_trivial_constructor(_t)
+	#define KT_HAS_TRIVIAL_CTOR(_t) __has_trivial_constructor(_t) 
 #else
 	#error Not implemented
 #endif

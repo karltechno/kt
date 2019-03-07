@@ -29,6 +29,7 @@ TEST_CASE("Core Macros", "")
 	CHECK(kt::NextPow2(4) == 8);
 	CHECK(kt::NextPow2(8) == 16);
 	CHECK(kt::NextPow2(31) == 32);
+	CHECK(kt::NextPow2(63) == 64);
 	CHECK(kt::NextPow2(1547) == 2048);
 
 	CHECK(!kt::IsAligned(5, 8));
@@ -44,4 +45,32 @@ TEST_CASE("Core Macros", "")
 	CHECK(!kt::IsAligned(8, 4096));
 	CHECK(kt::IsAligned(4096, 4096));
 	CHECK(kt::IsAligned(4096 * 2, 4096));
+}
+
+struct Pod_NoCopy
+{
+	Pod_NoCopy(Pod_NoCopy const&)
+	{
+		pod = 2;
+	}
+
+	uint32_t pod;
+};
+
+struct Pod_ForceCopy
+{
+	Pod_ForceCopy(Pod_ForceCopy const&)
+	{
+		pod = 2;
+	}
+
+	uint32_t pod;
+};
+
+KT_BITWISE_COPYABLE(Pod_ForceCopy);
+
+TEST_CASE("Bitwise Copyable", "")
+{
+	CHECK(!KT_HAS_TRIVIAL_COPY(Pod_NoCopy));
+	CHECK(KT_HAS_TRIVIAL_COPY(Pod_ForceCopy));
 }
