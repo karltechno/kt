@@ -19,10 +19,10 @@ namespace kt
 static void Win32FindDataToFileInfo(FileStat& o_fileInfo, WIN32_FIND_DATAA const& _findData)
 {
 	o_fileInfo.m_name = _findData.cFileName;
-	o_fileInfo.m_createdTime = *(uint64_t*)&_findData.ftCreationTime;
-	o_fileInfo.m_lastAccessTime = *(uint64_t*)&_findData.ftLastAccessTime;
-	o_fileInfo.m_lastWriteTime = *(uint64_t*)&_findData.ftLastWriteTime;
-	o_fileInfo.m_size = ((uint64_t)_findData.nFileSizeLow) | ((uint64_t)_findData.nFileSizeHigh << 32u);
+	o_fileInfo.m_createdTime = (uint64_t(_findData.ftCreationTime.dwHighDateTime) << 32ull) | uint64_t(_findData.ftCreationTime.dwLowDateTime);
+	o_fileInfo.m_lastAccessTime = (uint64_t(_findData.ftLastAccessTime.dwHighDateTime) << 32ull) | uint64_t(_findData.ftLastAccessTime.dwLowDateTime);
+	o_fileInfo.m_lastWriteTime = (uint64_t(_findData.ftLastWriteTime.dwHighDateTime) << 32ull) | uint64_t(_findData.ftLastWriteTime.dwLowDateTime);
+	o_fileInfo.m_size = (uint64_t(_findData.nFileSizeHigh) << 32ull) | uint64_t(_findData.nFileSizeLow);
 }
 
 bool WalkFolderImplWindows(char const* _path, WalkFolderFn _fn, void* _ctx)
@@ -33,7 +33,7 @@ bool WalkFolderImplWindows(char const* _path, WalkFolderFn _fn, void* _ctx)
 	{
 		return false;
 	}
-
+	
 	FileStat fileInfo;
 	Win32FindDataToFileInfo(fileInfo, findData);
 	BOOL ret;
