@@ -93,13 +93,15 @@ struct ISerializer
 		Read
 	};
 
-	ISerializer(IReader* _reader)
+	ISerializer(IReader* _reader, uint32_t _version)
 		: m_mode(Mode::Read)
+		, m_version(_version)
 		, m_reader(_reader)
 	{}
 
-	ISerializer(IWriter* _writer)
+	ISerializer(IWriter* _writer, uint32_t _version)
 		: m_mode(Mode::Write)
+		, m_version(_version)
 		, m_writer(_writer)
 	{}
 
@@ -108,18 +110,25 @@ struct ISerializer
 	void SerializeBytes(void* _buff, uint64_t _sz)
 	{
 		bool const ok = m_mode == Mode::Write ? m_writer->WriteBytes(_buff, _sz) : m_reader->ReadBytes(_buff, _sz);
-		KT_UNUSED(ok);
 		KT_ASSERT(ok);
+		m_ok &= ok;
 	}
+
+	uint32_t Version() const { return m_version; }
+
+	bool OK() const { return m_ok; }
 
 private:
 	Mode m_mode;
+	uint32_t m_version;
 
 	union 
 	{
 		IReader* m_reader;
 		IWriter* m_writer;
 	};
+
+	bool m_ok = true;
 };
 
 template <typename T>

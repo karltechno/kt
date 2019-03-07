@@ -18,7 +18,8 @@ public:
 
 	static constexpr float c_maxLoadFactor = 0.75f;
 
-	friend void Serialize(ISerializer*, kt::HashMap<T_Key, T_Value, T_KeyOps>&);
+	template <typename K, typename V, typename KeyOps>
+	friend void Serialize(ISerializer* _s, kt::HashMap<K, V, KeyOps>& _t);
 
 	using ValueType = T_Value;;
 	using KeyType = T_Key;

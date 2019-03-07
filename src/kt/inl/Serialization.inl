@@ -32,11 +32,15 @@ void Serialize(ISerializer* _s, kt::Array<T>& _t)
 	}
 }
 
+
+
 template <typename K, typename V, typename KeyOps>
 void Serialize(ISerializer* _s, kt::HashMap<K, V, KeyOps>& _t)
 {
 	// Uses internal knowledge of kt::HashMap for speed, keep in check!
 	uint32_t numElements;
+
+	using SerializeHashMap = kt::HashMap<K, V, KeyOps>;
 
 	if (_s->SerializeMode() == ISerializer::Mode::Write)
 	{
@@ -50,16 +54,20 @@ void Serialize(ISerializer* _s, kt::HashMap<K, V, KeyOps>& _t)
 		_t.Reserve(numElements);
 	}
 
-	if (KT_HAS_TRIVIAL_COPY(K) && KT_HAS_TRIVIAL_COPY(V))
+	using ValueType = typename SerializeHashMap::ValueType;
+	using KeyType = typename SerializeHashMap::KeyType;
+
+	if (KT_HAS_TRIVIAL_COPY(KeyType) && KT_HAS_TRIVIAL_COPY(ValueType))
 	{
 		size_t const allocSize = _t.AllocSizeForCapacity(_t.Capacity());
+		_t.m_data.m_size = numElements;
 		_s->SerializeBytes(_t.m_data.m_ptr, allocSize);
 	}
 	else
 	{
 		if (_s->SerializeMode() == ISerializer::Mode::Write)
 		{
-			for (kt::HashMap<K, V, KeyOps>::Iterator it = _t.Begin();
+			for (typename SerializeHashMap::Iterator it = _t.Begin();
 				 it != _t.End();
 				 ++it)
 			{
@@ -71,10 +79,10 @@ void Serialize(ISerializer* _s, kt::HashMap<K, V, KeyOps>& _t)
 		{
 			for (uint32_t i = 0; i < numElements; ++i)
 			{
-				K key;
-				V val;
-				Serialize(_s, &key);
-				Serialize(_s, &val);
+				KeyType key;
+				ValueType val;
+				Serialize(_s, key);
+				Serialize(_s, val);
 				_t.Insert(key, val);
 			}
 		}
