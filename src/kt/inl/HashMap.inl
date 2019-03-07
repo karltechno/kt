@@ -221,34 +221,6 @@ auto HashMap<T_Key, T_Value, T_KeyOps>::Insert(KeyType const& _key, ValueType co
 }
 
 template<typename T_Key, typename T_Value, typename T_KeyOps>
-auto HashMap<T_Key, T_Value, T_KeyOps>::InsertIfMissing(KeyType const& _key, ValueType const& _default, bool* _didNewInsert) -> Iterator
-{
-	HashType const hash = HashKey(_key);
-	IndexType const foundIdx = FindIndex(_key, hash);
-	if (foundIdx != c_invalidIndex)
-	{
-		if (_didNewInsert)
-		{
-			*_didNewInsert = false;
-		}
-
-		return Iterator(this, foundIdx);
-	}
-
-	if (_didNewInsert)
-	{
-		*_didNewInsert = true;
-	}
-
-	KeyType key = _key;
-	ValueType val = _default;
-
-	// Todo: Optimise
-	IndexType const idx = InsertInternal(hash, key, val);
-	return Iterator(this, idx);
-}
-
-template<typename T_Key, typename T_Value, typename T_KeyOps>
 inline uint32_t HashMap<T_Key, T_Value, T_KeyOps>::Size() const
 {
 	return m_data.m_size;

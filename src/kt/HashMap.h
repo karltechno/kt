@@ -102,9 +102,6 @@ public:
 	// Insert or mutate value if current key is already in map.
 	Iterator Insert(KeyType const& _key, ValueType const& _value);
 
-	// Insert and set value to _default only if value was not already there, else leave it be.
-	Iterator InsertIfMissing(KeyType const& _key, ValueType const& _default, bool* _didNewInsert = nullptr);
-
 	// Begin iterator.
 	Iterator Begin();
 	ConstIterator Begin() const;
