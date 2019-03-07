@@ -10,6 +10,7 @@ set(COMPILED_SOURCES
     "Strings.cpp"
     "Timer.cpp"
     "HandleAllocator.cpp"
+    "Serialization.cpp"
     "StackTrace.cpp"
 )
 

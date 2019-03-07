@@ -5,6 +5,8 @@
 #include <kt/kt.h>
 #include <kt/Random.h>
 #include <kt/Serialization.h>
+#include <kt/HashMapDeclare.h>
+#include <kt/HashMap.h>
 
 TEST_CASE("Basic reader test", "[Serialization]")
 {
@@ -72,14 +74,14 @@ TEST_CASE("Serialize array u32", "[Serialization]")
 
 	{
 		kt::StaticMemoryBlockWriter writer(serializeBlock, sizeof(serializeBlock));
-		kt::ISerializer serializer(&writer);
+		kt::ISerializer serializer(&writer, 0);
 
 		Serialize(&serializer, arrA);
 	}
 
 	{
 		kt::StaticMemoryBlockReader reader(serializeBlock, sizeof(serializeBlock));
-		kt::ISerializer serializer(&reader);
+		kt::ISerializer serializer(&reader, 0);
 
 		Serialize(&serializer, arrB);
 	}
@@ -88,5 +90,45 @@ TEST_CASE("Serialize array u32", "[Serialization]")
 	for (uint32_t i = 0; i < c_size; ++i)
 	{
 		CHECK(arrB[i] == arrA[i]);
+	}
+}
+
+TEST_CASE("Serialize hashmap u32 -> u32", "[Serialization]")
+{
+	constexpr uint32_t c_size = 1023;
+	kt::HashMap<uint32_t, uint32_t> mapA;
+	kt::HashMap<uint32_t, uint32_t> mapB;
+
+	mapA.Reserve(c_size);
+
+	for (uint32_t i = 0; i < c_size; ++i)
+	{
+		mapA.Insert(i, i * 3 + 1);
+	}
+
+	char serializeBlock[sizeof(uint32_t) * c_size * 8];
+
+	{
+		kt::StaticMemoryBlockWriter writer(serializeBlock, sizeof(serializeBlock));
+		kt::ISerializer serializer(&writer, 0);
+
+		Serialize(&serializer, mapA);
+	}
+
+	{
+		kt::StaticMemoryBlockReader reader(serializeBlock, sizeof(serializeBlock));
+		kt::ISerializer serializer(&reader, 0);
+
+		Serialize(&serializer, mapB);
+	}
+
+	REQUIRE(mapA.Size() == mapB.Size());
+	for (kt::HashMap<uint32_t, uint32_t>::Iterator itA = mapA.Begin();
+		 itA != mapA.End();
+		 ++itA)
+	{
+		kt::HashMap<uint32_t, uint32_t>::Iterator itB = mapB.Find(itA->m_key);
+		REQUIRE(itB != mapB.End());
+		CHECK(itB->m_val == itA->m_val);
 	}
 }
