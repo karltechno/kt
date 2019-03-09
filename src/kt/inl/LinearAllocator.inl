@@ -33,7 +33,7 @@ void* LinearAllocator<ThreadSafeT>::Alloc(size_t const _sz, size_t const _align)
 {
 	if (ThreadSafeT == LinearAllocatorThreadSafety::ThreadSafeAlloc)
 	{
-		size_t const worstCaseAllocSize = AlignValue(_sz, _align);
+		size_t const worstCaseAllocSize = _sz + _align;
 		void* allocBegin = (void*)std::atomic_fetch_add_explicit(&m_curPtr, worstCaseAllocSize, std::memory_order_relaxed);
 
 		uintptr_t const alignedPtr = AlignValue((uintptr_t)allocBegin, _align);
