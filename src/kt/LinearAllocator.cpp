@@ -80,6 +80,23 @@ void* LinearAllocator::BasePointer() const
 	return (void*)m_memBegin;
 }
 
+void* LinearAllocator::CurrentPointer() const
+{
+	return (void*)m_curPtr;
+}
+
+void* LinearAllocator::Align(size_t const _align)
+{
+	uintptr_t const aligned = kt::AlignValue(m_curPtr, _align);
+	if (aligned >= m_memEnd)
+	{
+		return nullptr;
+	}
+
+	m_curPtr = aligned;
+	return (void*)aligned;
+}
+
 size_t LinearAllocator::MemorySize() const
 {
 	return (uintptr_t)m_memEnd - (uintptr_t)m_memBegin;
@@ -92,9 +109,12 @@ void* LinearAllocator::ReAlloc(void* _ptr, size_t const _sz)
 	if (uintptr_t(_ptr) == m_curPtr - m_lastAllocSize)
 	{
 		KT_ASSERT(_sz > m_lastAllocSize);
-		bool const ok = Alloc(_sz - m_lastAllocSize, 1) != nullptr;
-		m_lastAllocSize = _sz;
-		return ok ? _ptr : nullptr;
+		if (Alloc(_sz - m_lastAllocSize, 1) != nullptr)
+		{
+			m_lastAllocSize = _sz;
+			return _ptr;
+		}
+		return nullptr;
 	}
 
 	return Alloc(_sz, KT_DEFAULT_ALIGN);

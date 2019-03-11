@@ -7,7 +7,7 @@ namespace kt
 {
 
 // Extremely simple linear/frame/bump allocator. Alloc simply bumps pointer from the provided memory block. 
-// Free is no-op, realloc simply calls alloc. Reset frees all allocations at once.
+// Free is no-op, realloc will extend the last allocation. Reset frees all allocations at once.
 struct LinearAllocator : IAllocator
 {
 	KT_NO_COPY(LinearAllocator);
@@ -53,6 +53,12 @@ struct LinearAllocator : IAllocator
 
 	// The backing memory block.
 	void* BasePointer() const; 
+
+	// The current pointer (BasePointer() + BytesAllocated());
+	void* CurrentPointer() const;
+
+	// Increment the current pointer to satisfy alignment and return it.
+	void* Align(size_t const _align);
 
 	// Total bytes in backing memory block (regardless of allocations).
 	size_t MemorySize() const;
