@@ -6,22 +6,26 @@
 namespace kt
 {
 
-
-enum class LinearAllocatorThreadSafety
-{
-	// Alloc is not thread safe.
-	NonThreadSafe,
-
-	// Alloc is thread safe.
-	ThreadSafeAlloc
-};
-
 // Extremely simple linear/frame/bump allocator. Alloc simply bumps pointer from the provided memory block. 
 // Free is no-op, realloc simply calls alloc. Reset frees all allocations at once.
-template <LinearAllocatorThreadSafety ThreadSafeT = LinearAllocatorThreadSafety::NonThreadSafe>
 struct LinearAllocator : IAllocator
 {
 	KT_NO_COPY(LinearAllocator);
+
+	struct AllocScope
+	{
+		AllocScope(LinearAllocator& _alloc)
+			: m_allocator(_alloc)
+		{
+			m_rewindTo = _alloc.BytesAllocated();
+		}
+
+		~AllocScope() { m_allocator.RewindToBytesAllocated(m_rewindTo); }
+
+	private:
+		size_t m_rewindTo;
+		LinearAllocator& m_allocator;
+	};
 
 	LinearAllocator() = default;
 	LinearAllocator(void* _mem, size_t _memSize);
@@ -44,6 +48,9 @@ struct LinearAllocator : IAllocator
 	// Current amount of bytes allocated.
 	size_t BytesAllocated() const;
 
+	// Rewind the memory block to _num bytes allocated. Can be quered from BytesAllocated() before allocating temporary memory.
+	void RewindToBytesAllocated(size_t const _num);
+
 	// The backing memory block.
 	void* BasePointer() const; 
 
@@ -51,14 +58,14 @@ struct LinearAllocator : IAllocator
 	size_t MemorySize() const;
 
 private:
-	void* m_memBegin = nullptr;
-	void* m_memEnd = nullptr;
+	uintptr_t m_memBegin = 0;
+	uintptr_t m_memEnd = 0;
 
-	std::atomic<uintptr_t> m_curPtr = 0;
+	uintptr_t m_curPtr;
+
+	uintptr_t m_lastAllocSize = 0;
 
 	IAllocator* m_allocator = nullptr;
 };
 
 }
-
-#include "inl/LinearAllocator.inl"
