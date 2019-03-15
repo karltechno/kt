@@ -7,9 +7,9 @@
 #include "Macros.h"
 #include "Concurrency.h"
 
-#if KT_COMPILER_MSVC
-#	define WIN32_LEAN_AND_MEAN
-#	include <Windows.h> // todo: remove
+#if KT_PLATFORM_WINDOWS
+	#define WIN32_LEAN_AND_MEAN
+	#include <Windows.h>
 #endif
 
 namespace kt
@@ -73,7 +73,7 @@ static void LogImpl(LogLevel const _level, char const* _fmt, va_list _list)
 
 	if (s_defaultLogSinks[(uint32_t)DefaultLogSink::DebugOutput])
 	{
-#if KT_COMPILER_MSVC
+#if KT_PLATFORM_WINDOWS
 		::OutputDebugStringA(buff);
 #endif
 	}
