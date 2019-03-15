@@ -173,7 +173,7 @@ inline void Array<T>::Resize(uint32_t const _sz)
 	if (_sz > m_size)
 	{
 		EnsureCapacity(_sz);
-		if (!KT_HAS_TRIVIAL_COPY(T))
+		if (!KT_HAS_TRIVIAL_CTOR(T))
 		{
 			T* begin = m_data + m_size;
 			T* end = m_data + _sz;
