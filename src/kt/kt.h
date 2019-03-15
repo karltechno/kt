@@ -45,6 +45,9 @@ KT_FORCEINLINE uint64_t Cnttz(uint64_t const _v);
 KT_FORCEINLINE int32_t Popcnt(uint32_t const _v);
 KT_FORCEINLINE uint64_t Popcnt(uint64_t const _v);
 
+KT_FORCEINLINE uint32_t FloorLog2(uint32_t const _v);
+KT_FORCEINLINE uint64_t FloorLog2(uint64_t const _v);
+
 // Ranged for support.
 
 template <typename T>

@@ -45,6 +45,14 @@ TEST_CASE("Core Macros", "")
 	CHECK(!kt::IsAligned(8, 4096));
 	CHECK(kt::IsAligned(4096, 4096));
 	CHECK(kt::IsAligned(4096 * 2, 4096));
+
+	CHECK(kt::FloorLog2(1u) == 0);
+	CHECK(kt::FloorLog2(2u) == 1);
+	CHECK(kt::FloorLog2(4u) == 2);
+	CHECK(kt::FloorLog2(7u) == 2);
+	CHECK(kt::FloorLog2(8u) == 3);
+	CHECK(kt::FloorLog2(255u) == 7);
+	CHECK(kt::FloorLog2(256u) == 8);
 }
 
 struct Pod_NoCopy

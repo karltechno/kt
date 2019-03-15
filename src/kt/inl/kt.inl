@@ -87,6 +87,17 @@ KT_FORCEINLINE bool IsPow2(T const _v)
 	return (_v & (_v - (T)1)) == (T)0;
 }
 
+KT_FORCEINLINE uint32_t FloorLog2(uint32_t const _v)
+{
+	KT_ASSERT(_v != 0);
+	return 31 - kt::Cntlz(_v);
+}
+
+KT_FORCEINLINE uint64_t FloorLog2(uint64_t const _v)
+{
+	KT_ASSERT(_v != 0);
+	return 63 - kt::Cntlz(_v);
+}
 
 template <typename T>
 T Min(T const _a, T const _b)
