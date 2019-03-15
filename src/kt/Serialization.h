@@ -143,6 +143,9 @@ void Serialize(ISerializer* _s, kt::Array<T>& _t);
 template <typename K, typename V, typename KeyOps>
 void Serialize(ISerializer* _s, kt::HashMap<K, V, KeyOps>& _t);
 
+template <uint32_t SizeT>
+void Serialize(ISerializer* _s, kt::StaticString<SizeT>& _t);
+
 }
 
 #include "inl/Serialization.inl"

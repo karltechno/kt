@@ -16,10 +16,17 @@ void Serialize(ISerializer* _s, kt::Array<T>& _t)
 	{
 		uint32_t numElements;
 		_s->SerializeBytes(&numElements, sizeof(uint32_t));
-		_t.PushBack_Raw(numElements);
+		if (KT_IS_POD(T))
+		{
+			_t.PushBack_Raw(numElements);
+		}
+		else
+		{
+			_t.Resize(numElements);
+		}
 	}
 
-	if (KT_HAS_TRIVIAL_COPY(T))
+	if (KT_IS_POD(T))
 	{
 		_s->SerializeBytes(_t.Data(), sizeof(T) * _t.Size());
 	}
@@ -57,7 +64,7 @@ void Serialize(ISerializer* _s, kt::HashMap<K, V, KeyOps>& _t)
 	using ValueType = typename SerializeHashMap::ValueType;
 	using KeyType = typename SerializeHashMap::KeyType;
 
-	if (KT_HAS_TRIVIAL_COPY(KeyType) && KT_HAS_TRIVIAL_COPY(ValueType))
+	if (KT_IS_POD(KeyType) && KT_IS_POD(ValueType))
 	{
 		size_t const allocSize = _t.AllocSizeForCapacity(_t.Capacity());
 		_t.m_data.m_size = numElements;
@@ -89,5 +96,16 @@ void Serialize(ISerializer* _s, kt::HashMap<K, V, KeyOps>& _t)
 
 	}
 }
+
+template <uint32_t SizeT>
+void Serialize(ISerializer* _s, StaticString<SizeT>& _t)
+{
+	uint32_t len = _t.Size();
+	Serialize(_s, len);
+	_t.Resize(len);
+	_s->SerializeBytes(_t.Data(), len);
+}
+
+
 
 }
