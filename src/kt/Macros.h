@@ -131,3 +131,9 @@ struct BitwiseCopyable
 #endif
 
 #define KT_NO_COPY(_class) _class(_class const&) = delete; _class operator=(_class const& _other) = delete;
+
+#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \
+                ((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |   \
+                ((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))
+
+#define KT_FOURCC(_0, _1, _2, _3) ((uint32_t(_0)) | (uint32_t(_1) << 8u) | (uint32_t(_2) << 16u) | (uint32_t(_3) << 24u))
