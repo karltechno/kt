@@ -66,7 +66,7 @@ void* LeakCheckAllocator<BaseAllocatorT>::Alloc(size_t const _sz, size_t const _
 {
 	size_t const newSize = AdjustSizeForHeader(_sz, _align);
 	void* original = m_baseAllocator.Alloc(newSize, _align);
-	uintptr_t adjustedRetPtr = kt::AlignValue(uintptr_t(original) + sizeof(AllocHeader), _align);
+	uintptr_t adjustedRetPtr = kt::AlignUp(uintptr_t(original) + sizeof(AllocHeader), _align);
 	AllocHeader* header = (AllocHeader*)(adjustedRetPtr - sizeof(AllocHeader));
 
 	void* retPtr = (void*)(adjustedRetPtr);
@@ -127,7 +127,7 @@ void LeakCheckAllocator<BaseAllocatorT>::CheckForLeaks()
 template <typename BaseAllocatorT>
 size_t kt::LeakCheckAllocator<BaseAllocatorT>::AdjustSizeForHeader(size_t _sz, size_t _align)
 {
-	return _sz + kt::AlignValue(sizeof(AllocHeader), _align);
+	return _sz + kt::AlignUp(sizeof(AllocHeader), _align);
 }
 
 template <typename BaseAllocatorT>

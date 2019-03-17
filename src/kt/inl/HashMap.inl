@@ -509,7 +509,7 @@ void HashMap<T_Key, T_Value, T_KeyOps>::SetAllocator(IAllocator* _allocator)
 template <typename T_Key, typename T_Value, typename T_KeyOps /*= HashMap_KeyOps<T_Key>*/>
 size_t kt::HashMap<T_Key, T_Value, T_KeyOps>::AllocSizeForCapacity(uint32_t _capacity)
 {
-	size_t const hashSz = kt::AlignValue(sizeof(HashType) * _capacity, KT_ALIGNOF(KvPair));
+	size_t const hashSz = kt::AlignUp(sizeof(HashType) * _capacity, KT_ALIGNOF(KvPair));
 	size_t const kvPSize = sizeof(KvPair) * _capacity;
 
 	return hashSz + kvPSize;
@@ -530,7 +530,7 @@ auto kt::HashMap<T_Key, T_Value, T_KeyOps>::AllocMapData(IAllocator* _allocator,
 template <typename T_Key, typename T_Value, typename T_KeyOps /*= HashMap_KeyOps<T_Key>*/>
 void HashMap<T_Key, T_Value, T_KeyOps>::FreeMapData(MapData& _data, IAllocator* _allocator)
 {
-	size_t const hashSz = kt::AlignValue(sizeof(HashType) * _data.m_capacity, KT_ALIGNOF(KvPair));
+	size_t const hashSz = kt::AlignUp(sizeof(HashType) * _data.m_capacity, KT_ALIGNOF(KvPair));
 	size_t const kvPSize = sizeof(KvPair) * _data.m_capacity;
 	_allocator->Free(_data.m_ptr, hashSz + kvPSize);
 	_data.m_capacity = 0;
@@ -549,7 +549,7 @@ auto HashMap<T_Key, T_Value, T_KeyOps>::MapData::HashPtr() const -> HashType*
 template <typename T_Key, typename T_Value, typename T_KeyOps /*= HashMap_KeyOps<T_Key>*/>
 auto HashMap<T_Key, T_Value, T_KeyOps>::MapData::KvPairPtr() const -> KvPair*
 {
-	size_t const hashSz = kt::AlignValue(sizeof(HashType) * m_capacity, KT_ALIGNOF(KvPair));
+	size_t const hashSz = kt::AlignUp(sizeof(HashType) * m_capacity, KT_ALIGNOF(KvPair));
 	return (KvPair*)((uintptr_t)m_ptr + hashSz);
 }
 

@@ -27,7 +27,7 @@ void* LinearAllocator::Alloc(size_t const _sz, size_t const _align)
 {
 	uintptr_t const current = m_curPtr;
 
-	uintptr_t const aligned = AlignValue(current, _align);
+	uintptr_t const aligned = AlignUp(current, _align);
 	if (aligned + _sz > m_memEnd)
 	{
 		// Cant satisfy this request.
@@ -87,7 +87,7 @@ void* LinearAllocator::CurrentPointer() const
 
 void* LinearAllocator::Align(size_t const _align)
 {
-	uintptr_t const aligned = kt::AlignValue(m_curPtr, _align);
+	uintptr_t const aligned = kt::AlignUp(m_curPtr, _align);
 	if (aligned >= m_memEnd)
 	{
 		return nullptr;

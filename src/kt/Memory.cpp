@@ -19,7 +19,7 @@ static CrtAllocator s_defaultCrtAllocator;
 static IAllocator* s_defaultAllocator = &s_defaultCrtAllocator;
 
 
-uintptr_t AlignValue(uintptr_t const _size, uintptr_t const _align)
+uintptr_t AlignUp(uintptr_t const _size, uintptr_t const _align)
 {
 	KT_ASSERT(IsPow2(_align));
 	return ((_size - 1u) + _align) & ~(_align - 1u);

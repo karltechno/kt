@@ -48,7 +48,7 @@ void operator delete[](void* ptr, std::align_val_t al);
 namespace kt
 {
 
-uintptr_t AlignValue(uintptr_t  const _size, uintptr_t const _align);
+uintptr_t AlignUp(uintptr_t  const _size, uintptr_t const _align);
 
 bool IsAligned(uintptr_t const _val, uintptr_t const _align);
 

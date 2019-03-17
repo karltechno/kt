@@ -17,13 +17,13 @@ TEST_CASE("Core Macros", "")
 	CHECK(kt::IsPow2(23452) == false);
 	CHECK(kt::IsPow2(84678) == false);
 
-	CHECK(kt::AlignValue(2, 4) == 4);
-	CHECK(kt::AlignValue(16, 16) == 16);
-	CHECK(kt::AlignValue(16, 4096) == 4096);
-	CHECK(kt::AlignValue(1544, 4096) == 4096);
+	CHECK(kt::AlignUp(2, 4) == 4);
+	CHECK(kt::AlignUp(16, 16) == 16);
+	CHECK(kt::AlignUp(16, 4096) == 4096);
+	CHECK(kt::AlignUp(1544, 4096) == 4096);
 
-	CHECK((kt::AlignValue(3452345, 2048) % 2048) == 0);
-	CHECK((kt::AlignValue(345345, 4096) % 4096) == 0);
+	CHECK((kt::AlignUp(3452345, 2048) % 2048) == 0);
+	CHECK((kt::AlignUp(345345, 4096) % 4096) == 0);
 
 	CHECK(kt::NextPow2(2) == 4);
 	CHECK(kt::NextPow2(4) == 8);
