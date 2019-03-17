@@ -104,10 +104,12 @@ struct BitwiseCopyable
 
 #define KT_CPP17 (__cplusplus >= 201703L) 
 
+
 #if KT_COMPILER_MSVC
 	#define KT_ALIGNAS(_align) __declspec(align(_align))
 	#define KT_ALIGNOF(_align) alignof(_align)
 	#define KT_FORCEINLINE __forceinline
+	#define KT_NO_INLINE __declspec(noinline)
 
 	#if KT_CPP17
 		#define KT_FALLTHROUGH [[fallthrough]]
@@ -119,6 +121,7 @@ struct BitwiseCopyable
 	#define KT_FORCEINLINE inline __attribute__((__always_inline__))
 	#define KT_ALIGNAS(_align) alignas(_align)
 	#define KT_ALIGNOF(_align) alignof(_align)
+	#define KT_NO_INLINE __attribute__ ((noinline))
 
 	#if KT_CPP17
 		#define KT_FALLTHROUGH [[fallthrough]]

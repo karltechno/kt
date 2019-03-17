@@ -41,9 +41,9 @@ template <typename T>
 auto kt::Array<T>::PushBack_Raw(uint32_t const _count) -> ValueType*
 {
 	uint32_t const oldSize = m_size;
-	if (m_size + _count >= m_capacity)
+	if (CapacityNeedsGrow(m_size + _count))
 	{
-		EnsureCapacity(m_size + _count);
+		InternalGrowCapacity(m_size + _count);
 	}
 
 	m_size += _count;
@@ -54,9 +54,9 @@ template <typename T>
 auto kt::Array<T>::PushBack_Raw() -> ValueType*
 {
 	uint32_t const oldSize = m_size;
-	if (m_size == m_capacity)
+	if (CapacityNeedsGrow(m_size + 1))
 	{
-		EnsureCapacity(m_size + 1);
+		InternalGrowCapacity(m_size + 1);
 	}
 
 	++m_size;
@@ -164,7 +164,10 @@ void Array<T>::SetAllocator(IAllocator* _allocator)
 template<typename T>
 inline void Array<T>::Reserve(uint32_t const _sz)
 {
-	EnsureCapacity(_sz);
+	if (CapacityNeedsGrow(_sz))
+	{
+		InternalGrowCapacity(_sz);
+	}
 }
 
 template<typename T>
@@ -172,7 +175,11 @@ inline void Array<T>::Resize(uint32_t const _sz)
 {
 	if (_sz > m_size)
 	{
-		EnsureCapacity(_sz);
+		if (CapacityNeedsGrow(_sz))
+		{
+			InternalGrowCapacity(_sz);
+		}
+
 		if (!KT_HAS_TRIVIAL_CTOR(T))
 		{
 			T* begin = m_data + m_size;
@@ -210,47 +217,48 @@ template <typename... Args>
 auto Array<T>::PushBack(Args&&... _args) -> ValueType&
 {
 	// Todo: guard against reference to previous buffer during realloc...
-	EnsureCapacity(m_size + 1u);
+	if (CapacityNeedsGrow(m_size + 1u))
+	{
+		InternalGrowCapacity(m_size + 1u);
+	}
 
 	return *PlacementNew(m_data + m_size++, std::forward<Args...>(_args)...);
 }
 
 template <typename T>
-void Array<T>::EnsureCapacity(uint32_t const _sz)
+KT_NO_INLINE void Array<T>::InternalGrowCapacity(uint32_t const _minimumCapacity)
 {
-	if (m_capacity < _sz)
+	KT_ASSERT(m_capacity < _minimumCapacity);
+	uint32_t const newCap = Max(Max(m_capacity + m_capacity / 2u, s_minSize), _minimumCapacity);
+
+	if (KT_HAS_TRIVIAL_COPY(T))
 	{
-		uint32_t const newCap = Max(Max(m_capacity + m_capacity / 2u, s_minSize), _sz);
-
-		if (KT_HAS_TRIVIAL_COPY(T))
-		{
-			m_data = m_data ? (T*)m_allocator->ReAlloc(m_data, newCap * sizeof(T)) : (T*)m_allocator->Alloc(newCap * sizeof(T), KT_ALIGNOF(T));
-		}
-		else
-		{
-			T* newData = (T*)m_allocator->Alloc(newCap * sizeof(T), KT_ALIGNOF(T));
-
-			T* newItr = newData;
-			T* begin = m_data;
-			T* end = m_data + m_size;
-
-			while (begin != end)
-			{
-				PlacementNew(newItr++, std::move(*begin));
-				begin->~T();
-				++begin;
-			}
-
-			if (m_data)
-			{
-				m_allocator->Free(m_data);
-			}
-
-			m_data = newData;
-		}
-
-		m_capacity = newCap;
+		m_data = m_data ? (T*)m_allocator->ReAlloc(m_data, newCap * sizeof(T)) : (T*)m_allocator->Alloc(newCap * sizeof(T), KT_ALIGNOF(T));
 	}
+	else
+	{
+		T* newData = (T*)m_allocator->Alloc(newCap * sizeof(T), KT_ALIGNOF(T));
+
+		T* newItr = newData;
+		T* begin = m_data;
+		T* end = m_data + m_size;
+
+		while (begin != end)
+		{
+			PlacementNew(newItr++, std::move(*begin));
+			begin->~T();
+			++begin;
+		}
+
+		if (m_data)
+		{
+			m_allocator->Free(m_data);
+		}
+
+		m_data = newData;
+	}
+
+	m_capacity = newCap;
 }
 
 template<typename T>
@@ -422,9 +430,19 @@ void Array<T>::PopBack()
 
 
 template <typename T>
+bool kt::Array<T>::CapacityNeedsGrow(uint32_t _cap) const
+{
+	return _cap > m_capacity;
+}
+
+
+template <typename T>
 void Array<T>::Insert(ValueType const* _array, uint32_t const _num)
 {
-	EnsureCapacity(m_capacity + _num);
+	if (CapacityNeedsGrow(m_size + _num))
+	{
+		InternalGrowCapacity(m_size + _num);
+	}
 
 	for (uint32_t i = 0; i < _num; ++i)
 	{

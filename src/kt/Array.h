@@ -119,8 +119,9 @@ private:
 	static const uint32_t s_minSize = 4u;
 
 	bool IsIteratorInRange(ConstIterator _it) const;
+	bool CapacityNeedsGrow(uint32_t _cap) const;
 
-	void EnsureCapacity(uint32_t const _sz);
+	KT_NO_INLINE void InternalGrowCapacity(uint32_t const _sz);
 
 	kt::IAllocator* m_allocator;
 	T* m_data = nullptr;

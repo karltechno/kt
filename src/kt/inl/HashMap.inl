@@ -119,7 +119,7 @@ auto kt::HashMap<T_Key, T_Value, T_KeyOps>::MakeCopy(IAllocator* _newAllocator) 
 }
 
 template <typename T_Key, typename T_Value, typename T_KeyOps>
-void HashMap<T_Key, T_Value, T_KeyOps>::GrowCapacityAndRehash(uint32_t const _newCap)
+KT_NO_INLINE void HashMap<T_Key, T_Value, T_KeyOps>::GrowCapacityAndRehash(uint32_t const _newCap)
 {
 	uint32_t const newCapacity = _newCap ? _newCap : Max(c_defaultCapacity, m_data.m_capacity * 2u);
 	KT_ASSERT(IsPow2(newCapacity));

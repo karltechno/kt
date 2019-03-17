@@ -177,7 +177,7 @@ private:
 
 	void Release();
 
-	void GrowCapacityAndRehash(uint32_t const newCap = 0u);
+	KT_NO_INLINE void GrowCapacityAndRehash(uint32_t const newCap = 0u);
 
 	IndexType InsertInternal(HashType const _hash, T_Key& _key, T_Value& _val, bool _setValIfAlreadyInMap = true);
 
