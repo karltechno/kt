@@ -5,12 +5,12 @@ namespace kt
 
 uint32_t StringHash(char const* _str)
 {
-	return XXH32(_str, StrLen(_str), c_xxhash32DefaultSeed);
+	return XXH32(_str, StrLen(_str), 0);
 }
 
 uint32_t StringHash(kt::StringView const& _str)
 {
-	return XXH32(_str.m_ptr, _str.m_size, c_xxhash32DefaultSeed);
+	return XXH32(_str.m_ptr, _str.m_size, 0);
 }
 
 uint32_t StringHashI(char const* _str)
@@ -32,7 +32,7 @@ uint32_t StringHashI(kt::StringView const& _str)
 		*dest++ = (c >= 'A' && c <= 'Z') ? (c | 0x20) : c;
 	}
 
-	return XXH32(buff, _str.m_size, c_xxhash32DefaultSeed);
+	return XXH32(buff, _str.m_size, 0);
 }
 
 
@@ -53,7 +53,7 @@ uint32_t XXHash_Incremental32::Finalize() const
 
 void XXHash_Incremental32::Reset()
 {
-	XXH32_reset(&m_state, c_xxhash32DefaultSeed);
+	XXH32_reset(&m_state, 0);
 }
 
 XXHash_Incremental64::XXHash_Incremental64()
@@ -73,7 +73,7 @@ uint64_t XXHash_Incremental64::Finalize() const
 
 void XXHash_Incremental64::Reset()
 {
-	XXH64_reset(&m_state, c_xxhash64DefaultSeed);
+	XXH64_reset(&m_state, 0);
 }
 
 }

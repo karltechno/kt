@@ -9,8 +9,6 @@
 
 namespace kt
 {
-constexpr uint32_t c_xxhash32DefaultSeed = 0x45f2e2a6;
-constexpr uint64_t c_xxhash64DefaultSeed = 0x45f2e2a6b4c81298ULL;
 
 // Hash finalizer from murmur hash.
 KT_FORCEINLINE uint32_t HashMix32(uint32_t _val);

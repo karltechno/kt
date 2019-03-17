@@ -47,12 +47,12 @@ KT_FORCEINLINE uint32_t Hash64to32(uint64_t const _val)
 
 KT_FORCEINLINE uint32_t XXHash_32(void const* _p, uint32_t _sz)
 {
-	return XXH32(_p, _sz, c_xxhash32DefaultSeed);
+	return XXH32(_p, _sz, 0);
 }
 
 KT_FORCEINLINE uint64_t XXHash_64(void const* _p, uint32_t _sz)
 {
-	return XXH64(_p, _sz, c_xxhash64DefaultSeed);
+	return XXH64(_p, _sz, 0);
 }
 
 }
