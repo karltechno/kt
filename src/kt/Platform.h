@@ -16,6 +16,9 @@
 #define KT_ARCH_64BIT			(0)
 #define KT_ARCH_32BIT			(0)
 
+#define KT_SSE2					(0)
+#define KT_SSE2					(0)
+
 #if defined(__clang__)
 	#undef KT_COMPILER_CLANG
 	#define KT_COMPILER_CLANG	(1)
@@ -52,6 +55,14 @@
 		#define NOMINMAX
 	#endif
 #endif
+
+
+#if defined(__SSE2__) || (KT_COMPILER_MSVC && (KT_ARCH_64BIT || _M_IX86_FP >= 2))
+#undef KT_SSE2
+	#define KT_SSE2				(1)
+#endif
+
+
 
 #if defined(_WIN32) || defined(_WIN64)
 	#undef KT_PLATFORM_WINDOWS
