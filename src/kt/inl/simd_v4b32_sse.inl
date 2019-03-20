@@ -30,7 +30,7 @@ template <uint8_t A, uint8_t B, uint8_t C, uint8_t D>
 KT_FORCEINLINE v4b32 Shuf(v4b32 _v)
 {
 	static_assert(A < 4 && B < 4 && C < 4 && D < 4, "Shuffle error, indicies must be in the range [0, 3].");
-	return v4b32(_mm_shuffle_epi32(_v.v, _v.v, _MM_SHUFFLE(D, C, B, A)));
+	return v4b32(_mm_shuffle_epi32(_v.v, _MM_SHUFFLE(D, C, B, A)));
 }
 
 template <uint8_t A, uint8_t B, uint8_t C, uint8_t D>
