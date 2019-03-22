@@ -8,7 +8,6 @@
 namespace kt
 {
 
-template <typename BaseAllocatorT>
 struct LeakCheckAllocator : IAllocator
 {
 	struct AllocHeader
@@ -21,16 +20,18 @@ struct LeakCheckAllocator : IAllocator
 	};
 
 	LeakCheckAllocator();
+	LeakCheckAllocator(IAllocator* _allocator);
 	~LeakCheckAllocator();
 
 	void CheckForLeaks();
 
 	void* Alloc(size_t const _sz, size_t const _align = KT_DEFAULT_ALIGN) override;
-	void* ReAlloc(void* _ptr, size_t const _sz) override;
-	void Free(void* _ptr) override;
-	void Free(void* _ptr, size_t const _sz) override;
+	void* ReAllocUnsized(void* _ptr, size_t const _sz, size_t const _align) override;
+	void FreeSized(void* _ptr, size_t const _size) override;
+	void FreeUnsized(void* _ptr) override;
 
-	BaseAllocatorT m_baseAllocator;
+	void SetAllocatorAndClear(IAllocator* _allocator);
+	IAllocator* GetAllocator() const;
 
 private:
 	AllocHeader* GetHeader(void* _ptr);
@@ -38,13 +39,12 @@ private:
 
 	void* HandleFreeAndGetRealPtr(void* _ptr);
 
+	IAllocator* m_baseAllocator = nullptr;
+
 	AllocHeader m_dummy;
 
-	AllocHeader* m_head;
+	AllocHeader* m_head = nullptr;
 };
 
 
-
 }
-
-#include "inl/DebugAllocator.inl"

@@ -1,6 +1,7 @@
 include(${KT_BASE_DIR}/Scripts/CMakeMacros.cmake)
 
 set(COMPILED_SOURCES 
+    "DebugAllocator.cpp"
     "Concurrency.cpp"
     "File.cpp"
     "FilePath.cpp"
@@ -64,7 +65,6 @@ set(INL_SOURCES
     "inl/AABB.inl"
     "inl/Array.inl"
     "inl/Concurrency.inl"
-    "inl/DebugAllocator.inl"
     "inl/Hash.inl"
     "inl/HashMap.inl"
     "inl/kt.inl"

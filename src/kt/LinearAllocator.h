@@ -33,8 +33,11 @@ struct LinearAllocator : IAllocator
 	~LinearAllocator();
 
 	void* Alloc(size_t const _sz, size_t const _align = KT_DEFAULT_ALIGN) override;
-	void* ReAlloc(void* _ptr, size_t const _sz) override;
-	void Free(void* _ptr) override;
+	
+	void* ReAllocUnsized(void* _ptr, size_t const _size, size_t const _align = KT_DEFAULT_ALIGN) override;
+	void* ReAllocSized(void* _ptr, size_t const _oldSize, size_t const _newSize, size_t const _align = KT_DEFAULT_ALIGN) override;
+
+	void FreeUnsized(void*) override {}
 
 	// Init from memory.
 	void Init(void* _mem, size_t const _memSize);
@@ -62,6 +65,9 @@ struct LinearAllocator : IAllocator
 
 	// Total bytes in backing memory block (regardless of allocations).
 	size_t MemorySize() const;
+
+	// Checks if the pointer belongs to this allocator.
+	bool IsPointerFrom(void* _ptr) const;
 
 private:
 	uintptr_t m_memBegin = 0;

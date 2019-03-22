@@ -80,7 +80,7 @@ void Array<T>::ClearAndFree()
 
 	if (m_data)
 	{
-		m_allocator->Free(m_data);
+		m_allocator->FreeSized(m_data, m_capacity * sizeof(T));
 		m_data = nullptr;
 		m_size = 0;
 		m_capacity = 0;
@@ -233,7 +233,8 @@ KT_NO_INLINE void Array<T>::InternalGrowCapacity(uint32_t const _minimumCapacity
 
 	if (KT_HAS_TRIVIAL_COPY(T))
 	{
-		m_data = m_data ? (T*)m_allocator->ReAlloc(m_data, newCap * sizeof(T)) : (T*)m_allocator->Alloc(newCap * sizeof(T), KT_ALIGNOF(T));
+		// Realloc = malloc when m_data = nullptr.
+		m_data = (T*)m_allocator->ReAllocSized(m_data, m_capacity * sizeof(T), newCap * sizeof(T), KT_ALIGNOF(T));
 	}
 	else
 	{
@@ -252,7 +253,7 @@ KT_NO_INLINE void Array<T>::InternalGrowCapacity(uint32_t const _minimumCapacity
 
 		if (m_data)
 		{
-			m_allocator->Free(m_data);
+			m_allocator->FreeSized(m_data, m_capacity * sizeof(T));
 		}
 
 		m_data = newData;

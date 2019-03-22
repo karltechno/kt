@@ -4,6 +4,7 @@
 #include "Platform.h"
 #include "kt.h"
 #include "Macros.h"
+#include "DebugAllocator.h"
 
 namespace kt
 {
@@ -19,35 +20,13 @@ static CrtAllocator s_defaultCrtAllocator;
 static IAllocator* s_defaultAllocator = &s_defaultCrtAllocator;
 
 
-uintptr_t AlignUp(uintptr_t const _size, uintptr_t const _align)
-{
-	KT_ASSERT(IsPow2(_align));
-	return ((_size - 1u) + _align) & ~(_align - 1u);
-}
-
-bool IsAligned(uintptr_t const _val, uintptr_t const _align)
-{
-	KT_ASSERT(IsPow2(_align));
-	return (_val & (_align - 1u)) == 0;
-}
-
-size_t GetPointerAlignment(void* _ptr)
-{
-	if (!_ptr)
-	{
-		return 0;
-	}
-
-	return (uintptr_t)1 << Cnttz((uintptr_t)_ptr);
-}
-
-void* CrtAllocator::Alloc(size_t const _sz, size_t const _align)
+void* CrtAllocator::Alloc(size_t const _size, size_t const _align)
 {
 #if KT_PLATFORM_WINDOWS
-	return ::_aligned_malloc(_sz, Min<size_t>(KT_DEFAULT_ALIGN, _align));
+	return ::_aligned_malloc(_size, Min<size_t>(KT_DEFAULT_ALIGN, _align));
 #else
 	void* pmem = nullptr;
-	if (posix_memalign(&pmem, Min<size_t>(KT_DEFAULT_ALIGN, _align), _sz) == 0)
+	if (posix_memalign(&pmem, Min<size_t>(KT_DEFAULT_ALIGN, _align), _size) == 0)
 	{
 		return pmem;
 	}
@@ -68,10 +47,10 @@ void* CrtAllocator::Alloc(size_t const _sz, size_t const _align)
 #endif
 }
 
-void* CrtAllocator::ReAlloc(void* _ptr, size_t const _sz)
+void* CrtAllocator::ReAllocUnsized(void* _ptr, size_t const _sz, size_t const _align)
 {
 #if KT_PLATFORM_WINDOWS
-	return _aligned_realloc(_ptr, _sz, KT_DEFAULT_ALIGN);
+	return _aligned_realloc(_ptr, _sz, _align);
 #else
 	size_t const oldSize = CrtAllocSize(_ptr, _align);
 
@@ -82,7 +61,7 @@ void* CrtAllocator::ReAlloc(void* _ptr, size_t const _sz)
 #endif
 }
 
-void CrtAllocator::Free(void* _ptr)
+void CrtAllocator::FreeUnsized(void* _ptr)
 {
 #if KT_PLATFORM_WINDOWS
 	return ::_aligned_free(_ptr);
@@ -98,12 +77,12 @@ void* Malloc(size_t const _s, size_t const _align)
 
 void Free(void* _p)
 {
-	s_defaultAllocator->Free(_p);
+	s_defaultAllocator->FreeUnsized(_p);
 }
 
 void* Realloc(void* _p, size_t const _sz)
 {
-	return s_defaultAllocator->ReAlloc(_p, _sz);
+	return s_defaultAllocator->ReAllocUnsized(_p, _sz);
 }
 
 IAllocator* GetDefaultAllocator()
@@ -132,32 +111,32 @@ void* operator new[](std::size_t count)
 
 void operator delete(void* ptr) noexcept
 {
-	kt::s_defaultAllocator->Free(ptr);
+	kt::s_defaultAllocator->FreeUnsized(ptr);
 }
 
 void operator delete(void* ptr, const std::nothrow_t&) noexcept
 {
-	kt::s_defaultAllocator->Free(ptr);
+	kt::s_defaultAllocator->FreeUnsized(ptr);
 }
 
 void operator delete(void* ptr, std::size_t sz) noexcept
 {
-	kt::s_defaultAllocator->Free(ptr, sz);
+	kt::s_defaultAllocator->FreeSized(ptr, sz);
 }
 
 void operator delete[](void* ptr, const std::nothrow_t&) noexcept
 {
-	kt::s_defaultAllocator->Free(ptr);
+	kt::s_defaultAllocator->FreeUnsized(ptr);
 }
 
 void operator delete[](void* ptr) noexcept
 {
-	kt::s_defaultAllocator->Free(ptr);
+	kt::s_defaultAllocator->FreeUnsized(ptr);
 }
 
 void operator delete[](void* ptr, std::size_t sz) noexcept
 {
-	kt::s_defaultAllocator->Free(ptr, sz);
+	kt::s_defaultAllocator->FreeSized(ptr, sz);
 }
 
 void* operator new(std::size_t count, const std::nothrow_t&) noexcept
@@ -194,25 +173,25 @@ void* operator new[](std::size_t count, std::align_val_t al, const std::nothrow_
 void operator delete  (void* ptr, std::size_t sz, std::align_val_t al)
 {
 	KT_UNUSED(al);
-	kt::s_defaultAllocator->Free(ptr, sz);
+	kt::s_defaultAllocator->FreeSized(ptr, sz);
 }
 
 void operator delete[](void* ptr, std::size_t sz, std::align_val_t al)
 {
 	KT_UNUSED(al);
-	kt::s_defaultAllocator->Free(ptr, sz);
+	kt::s_defaultAllocator->FreeSized(ptr, sz);
 }
 
 void operator delete  (void* ptr, std::align_val_t al)
 {
 	KT_UNUSED(al);
-	kt::s_defaultAllocator->Free(ptr);
+	kt::s_defaultAllocator->FreeUnsized(ptr);
 }
 
 void operator delete[](void* ptr, std::align_val_t al)
 {
 	KT_UNUSED(al);
-	kt::s_defaultAllocator->Free(ptr);
+	kt::s_defaultAllocator->FreeUnsized(ptr);
 }
 
 #endif

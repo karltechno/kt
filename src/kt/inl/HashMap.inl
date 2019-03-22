@@ -530,9 +530,7 @@ auto kt::HashMap<T_Key, T_Value, T_KeyOps>::AllocMapData(IAllocator* _allocator,
 template <typename T_Key, typename T_Value, typename T_KeyOps /*= HashMap_KeyOps<T_Key>*/>
 void HashMap<T_Key, T_Value, T_KeyOps>::FreeMapData(MapData& _data, IAllocator* _allocator)
 {
-	size_t const hashSz = kt::AlignUp(sizeof(HashType) * _data.m_capacity, KT_ALIGNOF(KvPair));
-	size_t const kvPSize = sizeof(KvPair) * _data.m_capacity;
-	_allocator->Free(_data.m_ptr, hashSz + kvPSize);
+	_allocator->FreeSized(_data.m_ptr, AllocSizeForCapacity(_data.m_capacity));
 	_data.m_capacity = 0;
 	_data.m_size = 0;
 	_data.m_ptr = nullptr;

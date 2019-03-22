@@ -106,7 +106,7 @@ struct BitwiseCopyable
 
 
 #if KT_COMPILER_MSVC
-	#define KT_ALIGNAS(_align) __declspec(align(_align))
+	#define KT_ALIGNAS(_align) alignas(_align)
 	#define KT_ALIGNOF(_align) alignof(_align)
 	#define KT_FORCEINLINE __forceinline
 	#define KT_NO_INLINE __declspec(noinline)

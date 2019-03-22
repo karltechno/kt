@@ -1,5 +1,7 @@
 #include "LinearAllocator.h"
 
+#include <string.h>
+
 namespace kt
 {
 
@@ -18,7 +20,7 @@ LinearAllocator::~LinearAllocator()
 	KT_ASSERT(m_curPtr == m_memBegin);
 	if (m_allocator)
 	{
-		m_allocator->Free((void*)m_memBegin, m_memEnd - m_memBegin);
+		m_allocator->FreeSized((void*)m_memBegin, m_memEnd - m_memBegin);
 	}
 }
 
@@ -102,28 +104,53 @@ size_t LinearAllocator::MemorySize() const
 	return (uintptr_t)m_memEnd - (uintptr_t)m_memBegin;
 }
 
-void* LinearAllocator::ReAlloc(void* _ptr, size_t const _sz)
+bool LinearAllocator::IsPointerFrom(void* _ptr) const
 {
-	// Todo: ptr == 0 is valid? means alloc in crt?
-	KT_ASSERT(_ptr);
-	if (uintptr_t(_ptr) == m_curPtr - m_lastAllocSize)
+	uintptr_t const ptr = uintptr_t(_ptr);
+	return ptr >= m_memBegin && ptr < m_memEnd;
+}
+
+void* LinearAllocator::ReAllocUnsized(void* _ptr, size_t const _size, size_t const _align)
+{
+	KT_UNUSED3(_ptr, _size, _align);
+	KT_ASSERT(false && "ReAllocUnsized not implemented.");
+	return nullptr;
+}
+
+void* LinearAllocator::ReAllocSized(void* _ptr, size_t const _oldSize, size_t const _newSize, size_t const _align)
+{
+	if (!_ptr)
 	{
-		KT_ASSERT(_sz > m_lastAllocSize);
-		if (Alloc(_sz - m_lastAllocSize, 1) != nullptr)
-		{
-			m_lastAllocSize = _sz;
-			return _ptr;
-		}
-		return nullptr;
+		return Alloc(_newSize, _align);
 	}
 
-	return Alloc(_sz, KT_DEFAULT_ALIGN);
+	KT_ASSERT(IsPointerFrom(_ptr));
+
+	void* lastAlloc = (void*)(uintptr_t(CurrentPointer()) - m_lastAllocSize);
+	if (lastAlloc == _ptr && IsAligned(uintptr_t(_ptr), _align))
+	{
+		KT_ASSERT(_newSize >= m_lastAllocSize);
+		uintptr_t const allocSizeDiff = _newSize - m_lastAllocSize;
+		if (allocSizeDiff + m_curPtr >= m_memEnd)
+		{
+			return nullptr;
+		}
+
+		m_lastAllocSize += allocSizeDiff;
+		m_curPtr += allocSizeDiff;
+		return _ptr;
+	}
+	else
+	{
+		void* newMem = Alloc(_newSize, _align);
+		if (newMem)
+		{
+			memcpy(newMem, _ptr, _oldSize);
+		}
+
+		return newMem;
+	}
 }
 
-void LinearAllocator::Free(void* _ptr)
-{
-	// No-op - TODO: Track allocations in debug?
-	KT_UNUSED(_ptr);
-}
 
 }
