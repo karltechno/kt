@@ -61,7 +61,7 @@ private:
 	Entry m_entry = nullptr;
 	void* m_userData = nullptr;
 	void* m_threadHandle = nullptr;
-	std::atomic<uint32_t> m_running = false;
+	std::atomic<uint32_t> m_running{ 0 };
 };
 
 class Event

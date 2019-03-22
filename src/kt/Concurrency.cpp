@@ -162,7 +162,8 @@ void Thread::Join()
 		return;
 	}
 #if KT_PLATFORM_WINDOWS
-	HRESULT const res =::WaitForSingleObject(m_threadHandle, INFINITE);
+	HRESULT const res = ::WaitForSingleObject(m_threadHandle, INFINITE);
+	KT_UNUSED(res);
 	KT_ASSERT(res == WAIT_OBJECT_0);
 	::CloseHandle(m_threadHandle);
 	m_threadHandle = nullptr;
