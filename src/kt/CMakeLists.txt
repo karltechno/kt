@@ -10,7 +10,6 @@ set(COMPILED_SOURCES
     "Memory.cpp"
     "Strings.cpp"
     "Timer.cpp"
-    "HandleAllocator.cpp"
     "Serialization.cpp"
     "StackTrace.cpp"
 )
@@ -27,7 +26,6 @@ set(HEADER_SOURCES
     "DebugAllocator.h"
     "File.h"
     "FilePath.h"
-    "HandleAllocator.h"
     "Hash.h"
     "HashMap.h"
     "HashMapDeclare.h"
