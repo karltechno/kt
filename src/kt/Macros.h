@@ -110,6 +110,7 @@ struct BitwiseCopyable
 	#define KT_ALIGNOF(_align) alignof(_align)
 	#define KT_FORCEINLINE __forceinline
 	#define KT_NO_INLINE __declspec(noinline)
+	#define KT_UNREACHABLE __assume(0);
 
 	#if KT_CPP17
 		#define KT_FALLTHROUGH [[fallthrough]]
@@ -122,6 +123,8 @@ struct BitwiseCopyable
 	#define KT_ALIGNAS(_align) alignas(_align)
 	#define KT_ALIGNOF(_align) alignof(_align)
 	#define KT_NO_INLINE __attribute__ ((noinline))
+	#define KT_UNREACHABLE ___builtin_unreachable();
+
 
 	#if KT_CPP17
 		#define KT_FALLTHROUGH [[fallthrough]]
