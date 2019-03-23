@@ -11,7 +11,7 @@ static void ThreadTest(kt::Thread* _t)
 TEST_CASE("Thread Test 1", "")
 {
 	std::atomic<uint32_t> x;
-	std::atomic_store_explicit(&x, 3, std::memory_order_acquire);
+	std::atomic_store_explicit(&x, 3, std::memory_order_relaxed);
 
 	kt::Thread thread;
 
@@ -24,7 +24,7 @@ TEST_CASE("Thread Test 1", "")
 	thread.Join();
 }
 
-KT_ALIGNAS(16) struct TwoPointers
+struct KT_ALIGNAS(16) TwoPointers
 {
 	uintptr_t a;
 	uintptr_t b;

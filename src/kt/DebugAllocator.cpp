@@ -1,41 +1,35 @@
-#pragma once
-#include "../DebugAllocator.h"
-#include "../Logging.h"
+#include "DebugAllocator.h"
+#include "Logging.h"
 
 namespace kt
 {
 
-template <typename BaseAllocatorT>
-LeakCheckAllocator<BaseAllocatorT>::~LeakCheckAllocator()
+LeakCheckAllocator::LeakCheckAllocator(IAllocator* _allocator)
+{
+	SetAllocatorAndClear(_allocator);
+}
+
+LeakCheckAllocator::~LeakCheckAllocator()
 {
 	CheckForLeaks();
 }
 
-template <typename BaseAllocatorT>
-LeakCheckAllocator<BaseAllocatorT>::LeakCheckAllocator()
+LeakCheckAllocator::LeakCheckAllocator()
 {
-	m_dummy.m_ptrToFree = nullptr;
-	m_dummy.m_allocSize = 0;
-	m_dummy.m_next = &m_dummy;
-	m_dummy.m_prev = &m_dummy;
-	m_head = &m_dummy;
+	SetAllocatorAndClear(nullptr);
 }
 
-template <typename BaseAllocatorT>
-void LeakCheckAllocator<BaseAllocatorT>::Free(void* _ptr, size_t const _sz)
+void LeakCheckAllocator::FreeSized(void* _ptr, size_t const _sz)
 {
-	m_baseAllocator.Free(HandleFreeAndGetRealPtr(_ptr), _sz);
+	m_baseAllocator->FreeSized(HandleFreeAndGetRealPtr(_ptr), _sz);
 }
 
-template <typename BaseAllocatorT>
-void LeakCheckAllocator<BaseAllocatorT>::Free(void* _ptr)
+void LeakCheckAllocator::FreeUnsized(void* _ptr)
 {
-	m_baseAllocator.Free(HandleFreeAndGetRealPtr(_ptr));
+	m_baseAllocator->FreeUnsized(HandleFreeAndGetRealPtr(_ptr));
 }
 
-
-template <typename BaseAllocatorT>
-void* kt::LeakCheckAllocator<BaseAllocatorT>::HandleFreeAndGetRealPtr(void* _ptr)
+void* kt::LeakCheckAllocator::HandleFreeAndGetRealPtr(void* _ptr)
 {
 	if (!_ptr)
 	{
@@ -48,29 +42,33 @@ void* kt::LeakCheckAllocator<BaseAllocatorT>::HandleFreeAndGetRealPtr(void* _ptr
 	return header->m_ptrToFree;
 }
 
-template <typename BaseAllocatorT>
-void* LeakCheckAllocator<BaseAllocatorT>::ReAlloc(void* _ptr, size_t const _sz)
+void* LeakCheckAllocator::ReAllocUnsized(void* _ptr, size_t const _sz, size_t const _align)
 {
+	if (!_ptr)
+	{
+		return Alloc(_sz, _align);
+	}
+
 	// Todo: maybe actually support realloc
 	AllocHeader* hdr = GetHeader(_ptr);
-	void* newPtr = Alloc(_sz);
+	void* newPtr = Alloc(_sz, _align);
 
 	memcpy(newPtr, _ptr, hdr->m_allocSize);
 
-	Free(_ptr, _sz);
+	FreeSized(_ptr, _sz);
 	return newPtr;
 }
 
-template <typename BaseAllocatorT>
-void* LeakCheckAllocator<BaseAllocatorT>::Alloc(size_t const _sz, size_t const _align /*= KT_DEFAULT_ALIGN*/)
+
+void* LeakCheckAllocator::Alloc(size_t const _sz, size_t const _align /*= KT_DEFAULT_ALIGN*/)
 {
 	size_t const newSize = AdjustSizeForHeader(_sz, _align);
-	void* original = m_baseAllocator.Alloc(newSize, _align);
+	void* original = m_baseAllocator->Alloc(newSize, _align);
 	uintptr_t adjustedRetPtr = kt::AlignUp(uintptr_t(original) + sizeof(AllocHeader), _align);
 	AllocHeader* header = (AllocHeader*)(adjustedRetPtr - sizeof(AllocHeader));
 
 	void* retPtr = (void*)(adjustedRetPtr);
-	
+
 	KT_ASSERT(uintptr_t(original) + newSize >= adjustedRetPtr + _sz);
 
 	header->m_trace.Capture(1);
@@ -86,8 +84,8 @@ void* LeakCheckAllocator<BaseAllocatorT>::Alloc(size_t const _sz, size_t const _
 	return retPtr;
 }
 
-template <typename BaseAllocatorT>
-void LeakCheckAllocator<BaseAllocatorT>::CheckForLeaks()
+
+void LeakCheckAllocator::CheckForLeaks()
 {
 	AllocHeader* cur = m_head;
 
@@ -119,21 +117,39 @@ void LeakCheckAllocator<BaseAllocatorT>::CheckForLeaks()
 		}
 
 		cur = cur->m_next;
-		kt::LogError("\n"); 
+		kt::LogError("\n");
 	} while (cur != &m_dummy);
 }
 
 
-template <typename BaseAllocatorT>
-size_t kt::LeakCheckAllocator<BaseAllocatorT>::AdjustSizeForHeader(size_t _sz, size_t _align)
+
+size_t kt::LeakCheckAllocator::AdjustSizeForHeader(size_t _sz, size_t _align)
 {
 	return _sz + kt::AlignUp(sizeof(AllocHeader), _align);
 }
 
-template <typename BaseAllocatorT>
-auto kt::LeakCheckAllocator<BaseAllocatorT>::GetHeader(void* _ptr) -> AllocHeader*
+
+LeakCheckAllocator::AllocHeader* LeakCheckAllocator::GetHeader(void* _ptr)
 {
 	return (AllocHeader*)(uintptr_t(_ptr) - sizeof(AllocHeader));
+}
+
+
+void LeakCheckAllocator::SetAllocatorAndClear(IAllocator* _allocator)
+{
+	m_baseAllocator = _allocator;
+
+	m_dummy.m_ptrToFree = nullptr;
+	m_dummy.m_allocSize = 0;
+	m_dummy.m_next = &m_dummy;
+	m_dummy.m_prev = &m_dummy;
+	m_head = &m_dummy;
+}
+
+
+IAllocator* LeakCheckAllocator::GetAllocator() const
+{
+	return m_baseAllocator;
 }
 
 }

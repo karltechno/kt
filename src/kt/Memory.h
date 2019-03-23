@@ -48,31 +48,31 @@ void operator delete[](void* ptr, std::align_val_t al);
 namespace kt
 {
 
-uintptr_t AlignUp(uintptr_t  const _size, uintptr_t const _align);
+inline uintptr_t AlignUp(uintptr_t const _size, uintptr_t const _align);
 
-bool IsAligned(uintptr_t const _val, uintptr_t const _align);
+inline bool IsAligned(uintptr_t const _val, uintptr_t const _align);
 
 template <typename T, typename... Args>
 T* PlacementNew(T* _mem, Args... _args);
 
-size_t GetPointerAlignment(void* _ptr);
-						   
 struct IAllocator
 {
 	virtual ~IAllocator() {}
 
 	virtual void* Alloc(size_t const _sz, size_t const _align = KT_DEFAULT_ALIGN) = 0;
-	virtual void* ReAlloc(void* _ptr, size_t const _sz) = 0;
-	virtual void Free(void* _ptr) = 0;
-	virtual void Free(void* _ptr, size_t const _sz) { KT_UNUSED(_sz); Free(_ptr); }
+
+	virtual void* ReAllocSized(void* _ptr, size_t const _oldSize, size_t const _newSize, size_t const _align = KT_DEFAULT_ALIGN) { KT_UNUSED(_oldSize); return ReAllocUnsized(_ptr, _newSize, _align); }
+	virtual void* ReAllocUnsized(void* _ptr, size_t const _size, size_t const _align = KT_DEFAULT_ALIGN) = 0;
+
+	virtual void FreeUnsized(void* _ptr) = 0;
+	virtual void FreeSized(void* _ptr, size_t const _size) { KT_UNUSED(_size); FreeUnsized(_ptr); }
 };
 
 struct CrtAllocator : IAllocator
 {
 	void* Alloc(size_t const _sz, size_t const _align) override;
-	void* ReAlloc(void* _ptr, size_t const _sz) override;
-	void Free(void* _ptr) override;
-	void Free(void* _ptr, size_t const _sz) override { KT_UNUSED(_sz); Free(_ptr); }
+	void* ReAllocUnsized(void* _ptr, size_t const _sz, size_t const _align = KT_DEFAULT_ALIGN) override;
+	void FreeUnsized(void* _ptr) override;
 };
 
 IAllocator* GetDefaultAllocator();
@@ -100,9 +100,13 @@ struct InplaceContainerAllocator : IAllocator
 		: m_fallback(_fallback)
 	{}
 
-	void* Alloc(size_t const _sz, size_t const _align = KT_DEFAULT_ALIGN) override;
-	void* ReAlloc(void* _ptr, size_t const _sz) override;
-	void Free(void* _ptr) override;
+	void* Alloc(size_t const _size, size_t const _align = KT_DEFAULT_ALIGN) override;
+
+	void FreeUnsized(void* _ptr) override;
+	void FreeSized(void* _ptr, size_t const _size) override;
+
+	void* ReAllocUnsized(void* _ptr, size_t const _size, size_t const _align = KT_DEFAULT_ALIGN) override;
+	void* ReAllocSized(void* _ptr, size_t const _oldSize, size_t const _newSize, size_t const _align = KT_DEFAULT_ALIGN) override;
 
 	bool IsPointerLocal(void* _ptr) const;
 

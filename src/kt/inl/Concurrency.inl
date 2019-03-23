@@ -2,12 +2,10 @@
 #include "../Concurrency.h"
 #include "../Memory.h"
 
-
 #if KT_PLATFORM_WINDOWS
 	extern "C" unsigned char _InterlockedCompareExchange128(__int64 volatile* _dest, __int64 exchHigh, __int64 exchLo, __int64* compareAndResult);
 	#pragma intrinsic(_InterlockedCompareExchange128)
 #endif
-
 namespace kt
 {
 

@@ -1,6 +1,7 @@
 #include "catch.hpp"
 
 #include <kt/simd_v4f32.h>
+#include <kt/simd_v4b32.h>
 
 kt::simd::v4b32 AlmostEqual_Absolute(kt::simd::v4f32 const _lhs, kt::simd::v4f32 const _rhs, float const _absErr)
 {
@@ -138,27 +139,27 @@ TEST_CASE("v4b32 BitOps", "simd")
 	CHECK(kt::simd::AllTrue((~kt::simd::Mask_v4b32<1, 0, 1, 0>()) == kt::simd::Mask_v4b32<0, 1, 0, 1>()));
 
 	{
-		kt::simd::v4b32 xor = kt::simd::Mask_v4b32<1, 0, 1, 0>() ^ kt::simd::Mask_v4b32<1, 1, 0, 1>();
+		kt::simd::v4b32 xorExpr = (kt::simd::Mask_v4b32<1, 0, 1, 0>() ^ kt::simd::Mask_v4b32<1, 1, 0, 1>());
 
-		CHECK(kt::simd::AllTrue(xor == kt::simd::Mask_v4b32<0, 1, 1, 1>()));
-		xor ^= kt::simd::Mask_v4b32<1, 1, 0, 1>();
-		CHECK(kt::simd::AllTrue(xor == kt::simd::Mask_v4b32<1, 0, 1, 0>()));
+		CHECK(kt::simd::AllTrue(xorExpr == kt::simd::Mask_v4b32<0, 1, 1, 1>()));
+		xorExpr ^= kt::simd::Mask_v4b32<1, 1, 0, 1>();
+		CHECK(kt::simd::AllTrue(xorExpr == kt::simd::Mask_v4b32<1, 0, 1, 0>()));
 	}
 
 	{
-		kt::simd::v4b32 and = kt::simd::Mask_v4b32<1, 0, 1, 1>() & kt::simd::Mask_v4b32<0, 1, 1, 1>();
+		kt::simd::v4b32 andExpr = kt::simd::Mask_v4b32<1, 0, 1, 1>() & kt::simd::Mask_v4b32<0, 1, 1, 1>();
 
-		CHECK(kt::simd::AllTrue(and == kt::simd::Mask_v4b32<0, 0, 1, 1>()));
-		and &= kt::simd::Mask_v4b32<1, 1, 0, 1>();
-		CHECK(kt::simd::AllTrue(and == kt::simd::Mask_v4b32<0, 0, 0, 1>()));
+		CHECK(kt::simd::AllTrue(andExpr == kt::simd::Mask_v4b32<0, 0, 1, 1>()));
+		andExpr &= kt::simd::Mask_v4b32<1, 1, 0, 1>();
+		CHECK(kt::simd::AllTrue(andExpr == kt::simd::Mask_v4b32<0, 0, 0, 1>()));
 	}
 
 	{
-		kt::simd::v4b32 or = kt::simd::Mask_v4b32<0, 0, 1, 0>() | kt::simd::Mask_v4b32<0, 0, 0, 1>();
+		kt::simd::v4b32 orExpr = kt::simd::Mask_v4b32<0, 0, 1, 0>() | kt::simd::Mask_v4b32<0, 0, 0, 1>();
 
-		CHECK(kt::simd::AllTrue(or == kt::simd::Mask_v4b32<0, 0, 1, 1>()));
-		or |= kt::simd::Mask_v4b32<1, 1, 0, 1>();
-		CHECK(kt::simd::AllTrue(or == kt::simd::Mask_v4b32<1, 1, 1, 1>()));
+		CHECK(kt::simd::AllTrue(orExpr == kt::simd::Mask_v4b32<0, 0, 1, 1>()));
+		orExpr |= kt::simd::Mask_v4b32<1, 1, 0, 1>();
+		CHECK(kt::simd::AllTrue(orExpr == kt::simd::Mask_v4b32<1, 1, 1, 1>()));
 	}
 }
 

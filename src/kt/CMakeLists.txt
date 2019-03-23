@@ -1,6 +1,7 @@
 include(${KT_BASE_DIR}/Scripts/CMakeMacros.cmake)
 
 set(COMPILED_SOURCES 
+    "DebugAllocator.cpp"
     "Concurrency.cpp"
     "File.cpp"
     "FilePath.cpp"
@@ -10,7 +11,6 @@ set(COMPILED_SOURCES
     "Memory.cpp"
     "Strings.cpp"
     "Timer.cpp"
-    "HandleAllocator.cpp"
     "Serialization.cpp"
     "StackTrace.cpp"
 )
@@ -27,7 +27,6 @@ set(HEADER_SOURCES
     "DebugAllocator.h"
     "File.h"
     "FilePath.h"
-    "HandleAllocator.h"
     "Hash.h"
     "HashMap.h"
     "HashMapDeclare.h"
@@ -66,7 +65,6 @@ set(INL_SOURCES
     "inl/AABB.inl"
     "inl/Array.inl"
     "inl/Concurrency.inl"
-    "inl/DebugAllocator.inl"
     "inl/Hash.inl"
     "inl/HashMap.inl"
     "inl/kt.inl"
