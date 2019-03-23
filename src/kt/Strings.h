@@ -100,6 +100,7 @@ private:
 	uint32_t m_size = 0u;
 };
 
+using String64 = StaticString<64>;
 using String128 = StaticString<128>;
 using String256 = StaticString<256>;
 using String512 = StaticString<512>;
