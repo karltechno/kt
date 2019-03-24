@@ -91,5 +91,10 @@ source_group("External" FILES ${EXTERNAL_SOURCES})
 
 kt_default_build_settings()
 add_library(kt ${COMPILED_SOURCES} ${HEADER_SOURCES} ${INL_SOURCES} ${NATVIS_SOURCES} ${EXTERNAL_SOURCES})
+
+if(MSVC)
+    target_compile_options(kt PUBLIC /wd4127)
+endif()
+
 target_include_directories(kt PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../)
 target_include_directories(kt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
