@@ -123,7 +123,7 @@ struct BitwiseCopyable
 	#define KT_ALIGNAS(_align) alignas(_align)
 	#define KT_ALIGNOF(_align) alignof(_align)
 	#define KT_NO_INLINE __attribute__ ((noinline))
-	#define KT_UNREACHABLE ___builtin_unreachable();
+	#define KT_UNREACHABLE __builtin_unreachable();
 
 
 	#if KT_CPP17
