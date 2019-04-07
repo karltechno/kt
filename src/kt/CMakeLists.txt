@@ -47,6 +47,7 @@ set(HEADER_SOURCES
     "simd_v4b32.h"
     "simd_v4f32.h"
     "Sort.h"
+    "Slice.h"
     "StackTrace.h"
     "StaticFunction.h"
     "Strings.h"
