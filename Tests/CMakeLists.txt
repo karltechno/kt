@@ -15,6 +15,7 @@ SET(COMPILED_SOURCES
     "Sort.cpp"
     "Memory.cpp"
     "Serialization.cpp"
+    "Slice.cpp"
     "StaticFunctionTest.cpp"
 )
 
