@@ -113,13 +113,13 @@ struct Slice
 
 	Reference operator[](uint32_t _idx)
 	{
-		KT_ASSERT(Size() < _idx);
+		KT_ASSERT(_idx < Size());
 		return m_begin[_idx];
 	}
 
 	ConstReference operator[](uint32_t _idx) const
 	{
-		KT_ASSERT(Size() < _idx);
+		KT_ASSERT(_idx < Size());
 		return m_begin[_idx];
 	}
 

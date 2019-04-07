@@ -12,7 +12,7 @@ TEST_CASE("Basic Slice", "[slice]")
 	sliceInt = kt::Slice<int>(a);
 	CHECK(sliceInt.Data() == &a);
 	CHECK(sliceInt.Size() == 1);
-	CHECK(sliceInt.Empty());
+	CHECK(!sliceInt.Empty());
 
 	int arrayOfInts[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
@@ -29,7 +29,7 @@ TEST_CASE("Basic Slice const", "[slice]")
 	sliceInt = kt::Slice<const int>(a);
 	CHECK(sliceInt.Data() == &a);
 	CHECK(sliceInt.Size() == 1);
-	CHECK(sliceInt.Empty());
+	CHECK(!sliceInt.Empty());
 
 	int const arrayOfInts[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
