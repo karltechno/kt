@@ -12,6 +12,16 @@
       </Expand>  
   </Type>
 
+  <Type Name="kt::Slice&lt;*&gt;">
+    <DisplayString>{{ Size={m_end - m_begin} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>m_end - m_begin</Size>
+        <ValuePointer>m_begin</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
   <Type Name="kt::StringView">
     <DisplayString>{m_ptr,[m_size]s}</DisplayString>
   </Type>
@@ -26,18 +36,19 @@
   </Type>
 
   <Type Name="kt::HashMap&lt;*&gt;">
-    <DisplayString>{{ Size: {m_size}, Capacity: {m_capacity} }}</DisplayString>
+    <DisplayString>{{ Size: { m_data.m_size }, Capacity: {m_data.m_capacity} }}</DisplayString>
     <Expand>
-      <Item Name="Size" ExcludeView="simple">m_size</Item>
-      <Item Name="Capacity" ExcludeView="simple">m_capacity</Item>
+      <Item Name="Size" ExcludeView="simple">m_data.m_size</Item>
+      <Item Name="Capacity" ExcludeView="simple">m_data.m_capacity</Item>
 
       <CustomListItems MaxItemsPerView="5000" ExcludeView="simple">
-        <Variable Name="Ptr" InitialValue="m_entries"/>
+        <Variable Name="KvPairPtr" InitialValue="(KvPair*) ( ((char*)m_data.m_ptr) + (((sizeof(HashType) * m_data.m_capacity - 1) + __alignof(KvPair)) &amp; ~(__alignof(KvPair))))"/>
+        <Variable Name="HashPtr" InitialValue="(HashType*)m_data.m_ptr"/>
         <Variable Name="Idx" InitialValue ="0"/>
-        <Size>m_size</Size>
+        <Size>m_data.m_size</Size>
         <Loop>
-          <If Condition="m_entries[Idx].m_probeDist != -1">
-            <Item>Ptr[Idx].m_kvPair</Item>
+          <If Condition="HashPtr[Idx] != 0">
+            <Item>KvPairPtr[Idx]</Item>
           </If>
           <Exec>Idx += 1</Exec>
         </Loop>
@@ -50,7 +61,7 @@
   	<DisplayString Condition="m_map == 0">Invalid Iterator</DisplayString>
 	<DisplayString Condition="m_idx == 0xFFFFFFFF">End</DisplayString>
 	<Expand>
-		<Item Name="Pair">m_map->m_entries[m_idx].m_kvPair</Item>
+    <Item Name="Pair">((KvPair*) ( ((char*)m_map->m_data.m_ptr) + (((sizeof(HashType) * m_map->m_data.m_capacity - 1) + __alignof(KvPair)) &amp; ~(__alignof(KvPair)))))[m_idx]</Item>
 	</Expand>
   </Type>
 
@@ -58,7 +69,7 @@
     <DisplayString Condition="m_map == 0">Invalid Iterator</DisplayString>
     <DisplayString Condition="m_idx == 0xFFFFFFFF">End</DisplayString>
     <Expand>
-      <Item Name="Pair">m_map->m_entries[m_idx].m_kvPair</Item>
+      <Item Name="Pair">((KvPair*) ( ((char*)m_map->m_data.m_ptr) + (((sizeof(HashType) * m_map->m_data.m_capacity - 1) + __alignof(KvPair)) &amp; ~(__alignof(KvPair)))))[m_idx]</Item>
     </Expand>
   </Type>
 
