@@ -129,10 +129,11 @@ void Swap(T& _a, T& _b)
 
 #undef KT_ENUM_CLASS_FLAG_OPERATORS
 #define KT_ENUM_CLASS_FLAG_OPERATORS(_enumType) \
-inline _enumType operator | (_enumType a, _enumType b) throw() { return _enumType(((__underlying_type(_enumType))a) | ((__underlying_type(_enumType))b)); } \
-inline _enumType &operator |= (_enumType &a, _enumType b) throw() { return (_enumType &)(((__underlying_type(_enumType) &)a) |= ((__underlying_type(_enumType))b)); } \
-inline _enumType operator & (_enumType a, _enumType b) throw() { return _enumType(((__underlying_type(_enumType))a) & ((__underlying_type(_enumType))b)); } \
-inline _enumType &operator &= (_enumType &a, _enumType b) throw() { return (_enumType &)(((__underlying_type(_enumType) &)a) &= ((__underlying_type(_enumType))b)); } \
-inline _enumType operator ~ (_enumType a) throw() { return _enumType(~((__underlying_type(_enumType))a)); } \
-inline _enumType operator ^ (_enumType a, _enumType b) throw() { return _enumType(((__underlying_type(_enumType))a) ^ ((__underlying_type(_enumType))b)); } \
-inline _enumType &operator ^= (_enumType &a, _enumType b) throw() { return (_enumType &)(((__underlying_type(_enumType) &)a) ^= ((__underlying_type(_enumType))b)); } \
+inline _enumType operator | (_enumType a, _enumType b)		{ return _enumType(((__underlying_type(_enumType))a) | ((__underlying_type(_enumType))b)); } \
+inline _enumType &operator |= (_enumType &a, _enumType b)	{ return (_enumType &)(((__underlying_type(_enumType) &)a) |= ((__underlying_type(_enumType))b)); } \
+inline _enumType operator & (_enumType a, _enumType b)		{ return _enumType(((__underlying_type(_enumType))a) & ((__underlying_type(_enumType))b)); } \
+inline _enumType &operator &= (_enumType &a, _enumType b)	{ return (_enumType &)(((__underlying_type(_enumType) &)a) &= ((__underlying_type(_enumType))b)); } \
+inline _enumType operator ~ (_enumType a) 					{ return _enumType(~((__underlying_type(_enumType))a)); } \
+inline _enumType operator ^ (_enumType a, _enumType b)		{ return _enumType(((__underlying_type(_enumType))a) ^ ((__underlying_type(_enumType))b)); } \
+inline _enumType &operator ^= (_enumType &a, _enumType b)	{ return (_enumType &)(((__underlying_type(_enumType) &)a) ^= ((__underlying_type(_enumType))b)); } \
+inline bool operator !(_enumType a)							{ return (__underlying_type(_enumType))a == (__underlying_type(_enumType))0; }

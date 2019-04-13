@@ -82,3 +82,25 @@ TEST_CASE("Bitwise Copyable", "")
 	CHECK(!KT_HAS_TRIVIAL_COPY(Pod_NoCopy));
 	CHECK(KT_HAS_TRIVIAL_COPY(Pod_ForceCopy));
 }
+
+enum class MyEnumFlags : uint32_t
+{
+	None = 0x0,
+	A = 0x1,
+	B = 0x2,
+	C = 0x4,
+	D = 0x8,
+};
+
+KT_ENUM_CLASS_FLAG_OPERATORS(MyEnumFlags);
+
+TEST_CASE("Enum flags", "")
+{
+	MyEnumFlags flags = MyEnumFlags::None;
+	CHECK(!flags);
+
+	flags |= MyEnumFlags::A;
+
+	CHECK(!!(flags & MyEnumFlags::A));
+	CHECK(!(flags & MyEnumFlags::B));
+}
