@@ -6,6 +6,7 @@ SET(COMPILED_SOURCES
     "Containers.cpp"
     "Core.cpp"
     "File.cpp"
+    "Handles.cpp"
     "HashMap.cpp"
     "Math.cpp"
     "String.cpp"

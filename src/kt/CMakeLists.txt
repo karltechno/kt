@@ -27,6 +27,7 @@ set(HEADER_SOURCES
     "DebugAllocator.h"
     "File.h"
     "FilePath.h"
+    "Handles.h"
     "Hash.h"
     "HashMap.h"
     "HashMapDeclare.h"
@@ -67,6 +68,7 @@ set(INL_SOURCES
     "inl/AABB.inl"
     "inl/Array.inl"
     "inl/Concurrency.inl"
+    "inl/Handles.inl"
     "inl/Hash.inl"
     "inl/HashMap.inl"
     "inl/kt.inl"
@@ -97,6 +99,10 @@ add_library(kt ${COMPILED_SOURCES} ${HEADER_SOURCES} ${INL_SOURCES} ${NATVIS_SOU
 
 if(MSVC)
     target_compile_options(kt PUBLIC /wd4127)
+endif()
+
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    target_compile_options(kt PUBLIC -mcx16)
 endif()
 
 target_include_directories(kt PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../)
