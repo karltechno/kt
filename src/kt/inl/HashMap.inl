@@ -315,7 +315,7 @@ auto HashMap<T_Key, T_Value, T_KeyOps>::InsertInternal(HashType const _hash, T_K
 		{
 			if (_setValIfAlreadyInMap)
 			{
-				kvps[pos].m_val = _val;
+				kvps[pos].m_val = std::move(_val);
 			}
 			return pos;
 		}
