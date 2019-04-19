@@ -15,8 +15,12 @@ struct StaticFunction<ReturnT(ArgsT...), StorageSizeT>
 
 	StaticFunction() = default;
 
-	template <typename FunctorT>
-	StaticFunction(FunctorT&& _ftor);
+	template <typename FunctorT, typename D = typename std::decay<FunctorT>::type,
+		typename = typename std::enable_if<!std::is_same<D, StaticFunction>::value>::type>
+	StaticFunction(FunctorT&& _ftor)
+	{
+		Set(std::forward<FunctorT>(_ftor));
+	}
 
 	~StaticFunction()
 	{
@@ -24,21 +28,14 @@ struct StaticFunction<ReturnT(ArgsT...), StorageSizeT>
 	}
 
 	StaticFunction(StaticFunction&& _other);
+	StaticFunction& operator=(StaticFunction&& _other);
 
-	StaticFunction& operator=(StaticFunction&& _other)
-	{
-		Clear();
-		if (_other.m_ops)
-		{
-			m_ops = _other.m_ops;
-			m_call = _other.m_call;
-			_other.m_ops(Op::MoveConstruct_FromTo, &_other, this);
-			_other.Clear();
-		}
-		return *this;
-	}
+	StaticFunction(StaticFunction const& _other);
+	StaticFunction& operator=(StaticFunction const& _other);
 
-	template <typename FunctorT>
+	template <typename FunctorT,
+		typename D = typename std::decay<FunctorT>::type,
+		typename = typename std::enable_if<!std::is_same<D, StaticFunction>::value>::type>
 	void Set(FunctorT&& _ftor);
 
 	void Clear();
@@ -51,6 +48,11 @@ struct StaticFunction<ReturnT(ArgsT...), StorageSizeT>
 
 	explicit operator bool() const
 	{
+		return Valid();
+	}
+
+	bool Valid() const
+	{
 		return m_ops != nullptr;
 	}
 
@@ -58,6 +60,7 @@ private:
 	enum class Op
 	{
 		MoveConstruct_FromTo,
+		CopyConstruct_FromTo,
 		Dtor
 	};
 

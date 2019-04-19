@@ -6,13 +6,6 @@ namespace kt
 {
 
 template <uint32_t StorageSizeT, typename ReturnT, typename... ArgsT>
-template <typename FunctorT>
-StaticFunction<ReturnT(ArgsT...), StorageSizeT>::StaticFunction(FunctorT&& _ftor)
-{
-	Set(std::move(_ftor));
-}
-
-template <uint32_t StorageSizeT, typename ReturnT, typename... ArgsT>
 StaticFunction<ReturnT(ArgsT...), StorageSizeT>::StaticFunction(StaticFunction&& _other)
 {
 	if (_other.m_ops)
@@ -25,14 +18,51 @@ StaticFunction<ReturnT(ArgsT...), StorageSizeT>::StaticFunction(StaticFunction&&
 	}
 }
 
+template <uint32_t StorageSizeT, typename ReturnT, typename... ArgsT>
+auto StaticFunction<ReturnT(ArgsT...), StorageSizeT>::operator=(StaticFunction&& _other) -> StaticFunction&
+{
+	Clear();
+	if (_other.m_ops)
+	{
+		m_ops = _other.m_ops;
+		m_call = _other.m_call;
+		_other.m_ops(Op::MoveConstruct_FromTo, &_other, this);
+		_other.Clear();
+	}
+	return *this;
+}
 
 template <uint32_t StorageSizeT, typename ReturnT, typename... ArgsT>
-template <typename FunctorT>
+StaticFunction<ReturnT(ArgsT...), StorageSizeT>::StaticFunction(StaticFunction const& _other)
+{
+	if (_other.m_ops)
+	{
+		_other.m_ops(Op::CopyConstruct_FromTo, const_cast<FunctionType*>(&_other), this);
+		m_ops = _other.m_ops;
+		m_call = _other.m_call;
+	}
+}
+
+template <uint32_t StorageSizeT, typename ReturnT, typename... ArgsT>
+auto StaticFunction<ReturnT(ArgsT...), StorageSizeT>::operator=(StaticFunction const& _other) -> StaticFunction&
+{
+	Clear();
+	if (_other.m_ops)
+	{
+		_other.m_ops(Op::CopyConstruct_FromTo, const_cast<StaticFunction*>(&_other), this);
+		m_ops = _other.m_ops;
+		m_call = _other.m_call;
+	}
+	return *this;
+}
+
+template <uint32_t StorageSizeT, typename ReturnT, typename... ArgsT>
+template <typename FunctorT, typename D, typename>
 void StaticFunction<ReturnT(ArgsT...), StorageSizeT>::Set(FunctorT&& _ftor)
 {
 	Clear();
 
-	using FunctorType = typename std::remove_reference<FunctorT>::type;
+	using FunctorType = typename std::decay<FunctorT>::type;
 
 	static_assert(sizeof(FunctorType) <= sizeof(m_storage), "Functor too big for storage.");
 
@@ -52,6 +82,13 @@ void StaticFunction<ReturnT(ArgsT...), StorageSizeT>::Set(FunctorT&& _ftor)
 				FunctorType* to = (FunctorType*)(_other->Storage());
 				kt::PlacementNew<FunctorType>(to, std::move(*from));
 			} break;
+
+			case Op::CopyConstruct_FromTo:
+			{
+				FunctorType* from = (FunctorType*)(_this->Storage());
+				FunctorType* to = (FunctorType*)(_other->Storage());
+				kt::PlacementNew<FunctorType>(to, *from);
+			} break;
 		}
 	};
 
@@ -61,7 +98,7 @@ void StaticFunction<ReturnT(ArgsT...), StorageSizeT>::Set(FunctorT&& _ftor)
 		return ftor(std::forward<ArgsT...>(_args)...);
 	};
 	
-	kt::PlacementNew<FunctorType>((FunctorType*)Storage(), std::move(_ftor));
+	kt::PlacementNew<FunctorType>((FunctorType*)Storage(), std::forward<FunctorT>(_ftor));
 }
 
 template <uint32_t StorageSizeT, typename ReturnT, typename... ArgsT>
