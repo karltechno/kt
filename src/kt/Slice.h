@@ -128,4 +128,28 @@ private:
 	T* m_end = nullptr;
 };
 
+template <typename T>
+kt::Slice<T> MakeSlice(T& _elem)
+{
+	return kt::Slice<T>(_elem);
+}
+
+template <typename T>
+kt::Slice<T> MakeSlice(T* _begin, T* _end)
+{
+	return kt::Slice<T>(_begin, _end);
+}
+
+template <typename T>
+kt::Slice<T> MakeSlice(T* _begin, uint32_t _count)
+{
+	return kt::Slice<T>(_begin, _count);
+}
+
+template <typename T, size_t CArraySizeT>
+kt::Slice<T> MakeSlice(T(&_cArray)[CArraySizeT])
+{
+	return kt::Slice<T>(_cArray);
+}
+
 }
