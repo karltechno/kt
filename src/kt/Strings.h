@@ -183,6 +183,8 @@ StringView StrFind(StringView const& _view, char const _c);
 // Search for a character from the end of a string. Returns a string view [_c, end) or empty if not found.
 StringView StrFindR(StringView const& _view, char const _c);
 
+inline char ToLower(char _c);
+
 }
 
 #include "inl/Strings.inl"

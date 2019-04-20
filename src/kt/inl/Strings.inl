@@ -256,6 +256,11 @@ StringView::StringView(StaticString<SizeT> const& _str)
 {
 }
 
+char ToLower(char _c)
+{
+	return (_c >= 'A' && _c <= 'Z') ? (_c | 0x20) : _c;
+}
+
 
 
 }

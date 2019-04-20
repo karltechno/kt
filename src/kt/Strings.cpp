@@ -69,12 +69,16 @@ StringView StringView::Slice(uint32_t _begin, uint32_t _end) const
 
 int32_t StrCmp(char const* _lhs, char const* _rhs)
 {
-	return ::strcmp(_lhs, _rhs);
+	int32_t const res = ::strcmp(_lhs, _rhs);
+	if (res == 0) return 0;
+	return res < 0 ? -1 : 1;
 }
 
 int32_t StrCmpI(char const* _lhs, char const* _rhs)
 {
-	return ::_strcmpi(_lhs, _rhs);
+	int32_t const res = ::_stricmp(_lhs, _rhs);
+	if (res == 0) return 0;
+	return res < 0 ? -1 : 1;
 }
 
 int32_t StrCmpI(StringView const& _lhs, StringView const& _rhs)
