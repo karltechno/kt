@@ -130,6 +130,10 @@ struct StringView
 	template <uint32_t SizeT>
 	StringView(StaticString<SizeT> const& _str);
 
+	StringView Suffix(uint32_t _begin) const;
+	StringView Prefix(uint32_t _end) const;
+	StringView Slice(uint32_t _begin, uint32_t _end) const;
+
 	// Size getters.
 	uint32_t Size() const;
 	bool Empty() const;
