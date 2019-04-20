@@ -40,10 +40,10 @@ struct StaticFunction<ReturnT(ArgsT...), StorageSizeT>
 
 	void Clear();
 
-	ReturnT operator()(ArgsT... _args)
+	ReturnT operator()(ArgsT... _args) const
 	{
 		KT_ASSERT(m_call);
-		return m_call(m_storage, std::forward<ArgsT>(_args)...);
+		return m_call(Storage(), std::forward<ArgsT>(_args)...);
 	}
 
 	explicit operator bool() const
@@ -73,7 +73,7 @@ private:
 	// Todo: do we ever want more alignment?
 	KT_ALIGNAS(16) char m_storage[StorageSizeT];
 
-	void* Storage() { return static_cast<void*>(m_storage); }
+	void* Storage() const { return const_cast<void*>(reinterpret_cast<void const*>(m_storage)); }
 };
 
 }
