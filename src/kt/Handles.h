@@ -49,6 +49,9 @@ public:
 	VersionedHandlePool() = default;
 	~VersionedHandlePool();
 
+	VersionedHandlePool(VersionedHandlePool&& _other);
+	VersionedHandlePool& operator=(VersionedHandlePool&& _other);
+
 	void Init(IAllocator* _alloc, uint32_t _initialCapacity);
 
 	DataT* Lookup(HandleType _handle);

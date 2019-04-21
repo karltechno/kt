@@ -29,6 +29,37 @@ VersionedHandlePool<DataT>::~VersionedHandlePool()
 }
 
 template <typename DataT>
+VersionedHandlePool<DataT>::VersionedHandlePool(VersionedHandlePool&& _other)
+	: m_allocator(_other.m_allocator)
+	, m_entries(_other.m_entries)
+	, m_numAllocated(_other.m_numAllocated)
+	, m_capacity(_other.m_capacity)
+	, m_freeListHead(_other.m_freeListHead)
+{
+	_other.m_allocator = nullptr;
+	_other.m_entries = nullptr;
+	_other.m_numAllocated = 0;
+	_other.m_capacity = 0;
+	_other.m_freeListHead = 0;
+}
+
+template <typename DataT>
+VersionedHandlePool<DataT>& VersionedHandlePool<DataT>::operator=(VersionedHandlePool&& _other)
+{
+	m_allocator = _other.m_allocator;
+	m_entries = _other.m_entries;
+	m_numAllocated = _other.m_numAllocated;
+	m_capacity = _other.m_capacity;
+	m_freeListHead = _other.m_freeListHead;
+
+	_other.m_allocator = nullptr;
+	_other.m_entries = nullptr;
+	_other.m_numAllocated = 0;
+	_other.m_capacity = 0;
+	_other.m_freeListHead = 0;
+}
+
+template <typename DataT>
 void VersionedHandlePool<DataT>::Grow(uint32_t _sizeHint)
 {
 	uint32_t const newCap = kt::Min(_sizeHint, HandleType::c_maxIndex);
