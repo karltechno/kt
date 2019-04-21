@@ -7,7 +7,7 @@ namespace kt
 template <typename T>
 T Lerp(T const _a, T const _b, T const _t)
 {
-	return (_b - _a) * _t + _a;
+	return (T(1) - _t) * _a + _t * _b;
 }
 
 KT_FORCEINLINE float ToRadians(float const _f)
@@ -24,15 +24,7 @@ KT_FORCEINLINE float ToDegrees(float const _f)
 
 KT_FORCEINLINE float Abs(float const _f)
 {
-	union
-	{
-		float m_f;
-		uint32_t m_u;
-	} un;
-
-	un.m_f = _f;
-	un.m_u &= 0x7FFFFFFF;
-	return un.m_f;
+	return ::fabsf(_f);
 }
 
 KT_FORCEINLINE float Sqrt(float const _f)
