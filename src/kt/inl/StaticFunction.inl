@@ -95,7 +95,7 @@ void StaticFunction<ReturnT(ArgsT...), StorageSizeT>::Set(FunctorT&& _ftor)
 	m_call = [](void* _storage, ArgsT... _args) -> ReturnT
 	{
 		FunctorType& ftor = *(FunctorType*)_storage;
-		return ftor(std::forward<ArgsT...>(_args)...);
+		return ftor(std::forward<ArgsT>(_args)...);
 	};
 	
 	kt::PlacementNew<FunctorType>((FunctorType*)Storage(), std::forward<FunctorT>(_ftor));
