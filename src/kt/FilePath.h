@@ -31,6 +31,7 @@ public:
 
 	void Clear();
 
+	char* DataMutable();
 	char const* Data() const; 
 	StringView GetStringView() const;
 
