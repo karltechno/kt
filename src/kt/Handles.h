@@ -107,11 +107,12 @@ public:
 	HandleType Alloc(DataT*& o_data);
 	void Free(HandleType _handle);
 
+
 	bool IsValid(HandleType _handle) const;
 	bool IsIndexInUse(uint32_t _index) const;
 
 	DataT* LookupAtIndex(uint32_t _idx);
-	DataT* LookupAtIndex(uint32_t _idx) const;
+	DataT const* LookupAtIndex(uint32_t _idx) const;
 
 	uint32_t NumAllocated() const { return m_numAllocated; }
 	uint32_t Capacity() const { return m_capacity; }
@@ -145,6 +146,8 @@ private:
 
 	uint32_t m_freeListHead = 0;
 };
+
+
 
 }
 

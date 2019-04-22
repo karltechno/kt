@@ -190,7 +190,7 @@ uint32_t VersionedHandlePool<DataT>::FirstAllocatedIndex() const
 
 
 template <typename DataT>
-DataT* VersionedHandlePool<DataT>::LookupAtIndex(uint32_t _idx) const
+DataT const* VersionedHandlePool<DataT>::LookupAtIndex(uint32_t _idx) const
 {
 	KT_ASSERT(IsIndexInUse(_idx));
 	return &m_entries[_idx].m_data;
@@ -234,7 +234,6 @@ auto kt::VersionedHandlePool<DataT>::Begin() -> DataIterator
 	return DataIterator(this, FirstAllocatedIndex());
 
 }
-
 
 template <typename DataT>
 auto kt::VersionedHandlePool<DataT>::HandleForIndex(uint32_t _index) const -> HandleType
