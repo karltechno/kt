@@ -34,16 +34,11 @@ static void HandleAllocSparseT_Churn(kt::VersionedHandlePool<uint32_t>& _handleA
 		found.Resize(_numToChurn);
 		memset(found.Data(), 0, _numToChurn);
 
-		for (kt::VersionedHandle i = _handleAlloc.FirstAllocatedHandle();
-			 _handleAlloc.IsValid(i);
-			 i = _handleAlloc.NextAllocatedHandle(i))
+		for (uint32_t data : _handleAlloc)
 		{
-			REQUIRE(_handleAlloc.IsValid(i));
-			uint32_t* ptr = _handleAlloc.Lookup(i);
-			REQUIRE(ptr);
-			REQUIRE(*ptr < _numToChurn);
-			CHECK(!found[*ptr]);
-			found[*ptr] = true;
+			REQUIRE(data < _numToChurn);
+			CHECK(!found[data]);
+			found[data] = true;
 		}
 
 		for (bool b : found)

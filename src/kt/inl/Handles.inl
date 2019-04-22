@@ -5,6 +5,21 @@
 namespace kt
 {
 
+
+template <typename DataT>
+auto VersionedHandlePool<DataT>::DataIteratorBase::operator++() -> DataIteratorBase&
+{
+	m_idx = m_pool->NextAllocatedIndex(m_idx);
+	return *this;
+}
+
+template <typename DataT>
+auto VersionedHandlePool<DataT>::DataIteratorBase::operator++(int) -> DataIteratorBase
+{
+	return DataIteratorBase(m_pool, m_pool->NextAllocatedIndex(m_idx));
+}
+
+
 template <typename DataT>
 void VersionedHandlePool<DataT>::Init(IAllocator* _alloc, uint32_t _initialCapacity)
 {
@@ -141,38 +156,96 @@ void VersionedHandlePool<DataT>::Free(HandleType _handle)
 }
 
 template <typename DataT>
-auto VersionedHandlePool<DataT>::NextAllocatedHandle(HandleType _handle) const -> HandleType
+uint32_t VersionedHandlePool<DataT>::NextAllocatedIndex(uint32_t _idx) const
 {
-	KT_ASSERT(IsValid(_handle));
-	for (uint32_t i = _handle.m_idx + 1; i < m_capacity; ++i)
+	for (uint32_t i = _idx + 1; i < m_capacity; ++i)
 	{
 		if (m_entries[i].m_inUse)
 		{
-			return HandleType{ uint16_t(i), m_entries[i].m_version };
+			return i;
 		}
 	}
 
-	return HandleType{};
+	return c_endIndex;
 }
 
 template <typename DataT>
-auto kt::VersionedHandlePool<DataT>::FirstAllocatedHandle() const -> HandleType
+uint32_t VersionedHandlePool<DataT>::FirstAllocatedIndex() const
 {
-	if (!m_numAllocated)
+	if (!m_capacity)
 	{
-		return HandleType{};
+		return c_endIndex;
 	}
 
 	for (uint32_t i = 0; i < m_capacity; ++i)
 	{
 		if (m_entries[i].m_inUse)
 		{
-			return HandleType{ uint16_t(i), m_entries[i].m_version };
+			return i;
 		}
 	}
 
 	KT_UNREACHABLE;
 }
+
+
+template <typename DataT>
+DataT* VersionedHandlePool<DataT>::LookupAtIndex(uint32_t _idx) const
+{
+	KT_ASSERT(IsIndexInUse(_idx));
+	return &m_entries[_idx].m_data;
+}
+
+template <typename DataT>
+DataT* VersionedHandlePool<DataT>::LookupAtIndex(uint32_t _idx)
+{
+	KT_ASSERT(IsIndexInUse(_idx));
+	return &m_entries[_idx].m_data;
+}
+
+template <typename DataT>
+bool VersionedHandlePool<DataT>::IsIndexInUse(uint32_t _index) const
+{
+	return _index < m_capacity && m_entries[_index].m_inUse;
+}
+
+
+template <typename DataT>
+auto kt::VersionedHandlePool<DataT>::End() const -> ConstDataIterator
+{
+	return ConstDataIterator(this, c_endIndex);
+}
+
+template <typename DataT>
+auto kt::VersionedHandlePool<DataT>::Begin() const -> ConstDataIterator
+{
+	return ConstDataIterator(this, FirstAllocatedIndex());
+}
+
+template <typename DataT>
+auto kt::VersionedHandlePool<DataT>::End() -> DataIterator
+{
+	return DataIterator(this, c_endIndex);
+}
+
+template <typename DataT>
+auto kt::VersionedHandlePool<DataT>::Begin() -> DataIterator
+{
+	return DataIterator(this, FirstAllocatedIndex());
+
+}
+
+
+template <typename DataT>
+auto kt::VersionedHandlePool<DataT>::HandleForIndex(uint32_t _index) const -> HandleType
+{
+	if (IsIndexInUse(_index))
+	{
+		return HandleType{ uint16_t(_index), m_entries[_index].m_version };
+	}
+	return HandleType{};
+}
+
 
 
 }
