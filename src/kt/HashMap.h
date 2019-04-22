@@ -21,7 +21,7 @@ public:
 	template <typename K, typename V, typename KeyOps>
 	friend void Serialize(ISerializer* _s, kt::HashMap<K, V, KeyOps>& _t);
 
-	using ValueType = T_Value;;
+	using ValueType = T_Value;
 	using KeyType = T_Key;
 	using IndexType = uint32_t;
 	using KeyOps = T_KeyOps;
@@ -138,6 +138,9 @@ public:
 	// Clear all elements.
 	void Clear();
 
+	// Clear all elements and free memory.
+	void ClearAndFree();
+
 	// Make a copy with new allocator.
 	HashMapType MakeCopy(IAllocator* _newAllocator) const;
 	
@@ -156,6 +159,7 @@ public:
 private:
 	static constexpr uint32_t c_defaultCapacity = 16u;
 	static constexpr uint32_t c_invalidIndex = UINT32_MAX;
+	static constexpr uint32_t c_kvpAlign = KT_ALIGNOF(KvPair);
 
 	IAllocator* m_allocator;
 	
