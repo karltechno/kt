@@ -1,7 +1,7 @@
 #pragma once
 #include "kt.h"
 #include "Platform.h"
-#include "SIMD.h"
+#include "simd.h"
 #include "simd_v4b32.h"
 
 

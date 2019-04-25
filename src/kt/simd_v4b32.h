@@ -1,7 +1,7 @@
 #pragma once
 #include "kt.h"
 #include "Platform.h"
-#include "SIMD.h"
+#include "simd.h"
 
 #if KT_SSE2
 #include <xmmintrin.h>
