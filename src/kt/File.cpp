@@ -12,6 +12,8 @@
 	#include <fcntl.h>
 #endif
 
+#pragma comment(lib, "Shlwapi.lib")
+
 namespace kt
 {
 
