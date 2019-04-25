@@ -49,14 +49,36 @@ char const* StringView::End() const
 	return m_ptr + m_size;
 }
 
+StringView StringView::Suffix(uint32_t _begin) const
+{
+	return Slice(_begin, Size());
+}
+
+
+StringView StringView::Prefix(uint32_t _end) const
+{
+	return Slice(0, _end);
+}
+
+StringView StringView::Slice(uint32_t _begin, uint32_t _end) const
+{
+	KT_ASSERT(_begin <= _end);
+	KT_ASSERT(_end <= Size());
+	return StringView(m_ptr + _begin, m_ptr + _end);
+}
+
 int32_t StrCmp(char const* _lhs, char const* _rhs)
 {
-	return ::strcmp(_lhs, _rhs);
+	int32_t const res = ::strcmp(_lhs, _rhs);
+	if (res == 0) return 0;
+	return res < 0 ? -1 : 1;
 }
 
 int32_t StrCmpI(char const* _lhs, char const* _rhs)
 {
-	return ::_strcmpi(_lhs, _rhs);
+	int32_t const res = ::_stricmp(_lhs, _rhs);
+	if (res == 0) return 0;
+	return res < 0 ? -1 : 1;
 }
 
 int32_t StrCmpI(StringView const& _lhs, StringView const& _rhs)
@@ -65,7 +87,7 @@ int32_t StrCmpI(StringView const& _lhs, StringView const& _rhs)
 	int32_t end = kt::Min(_lhs.m_size, _rhs.m_size);
 
 	char const* p0 = _lhs.m_ptr;
-	char const* p1 = _lhs.m_ptr;
+	char const* p1 = _rhs.m_ptr;
 
 	for (; i < end; ++i)
 	{
@@ -77,7 +99,7 @@ int32_t StrCmpI(StringView const& _lhs, StringView const& _rhs)
 
 		if (c0 != c1)
 		{
-			return c1 > c0;
+			return c0 < c1 ? -1 : 1;
 		}
 	}
 

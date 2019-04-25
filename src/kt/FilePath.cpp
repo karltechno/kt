@@ -213,6 +213,11 @@ void FilePath::Clear()
 	m_str.Clear();
 }
 
+char* FilePath::DataMutable()
+{
+	return m_str.Data();
+}
+
 char const* FilePath::Data() const
 {
 	return m_str.Data();

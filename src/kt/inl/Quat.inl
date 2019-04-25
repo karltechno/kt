@@ -143,6 +143,8 @@ KT_FORCEINLINE Quat QuatBetweenUnitVecs(Vec3 const& _lhs, Vec3 const& _rhs)
 
 KT_FORCEINLINE Mat4 ToMat4(Quat const& _q)
 {
+	KT_ASSERT(Abs(1.0f - Length(_q)) < 0.001f);
+
 	Mat4 m;
 	float const x2 = _q.x + _q.x;
 	float const y2 = _q.y + _q.y;
@@ -173,6 +175,8 @@ KT_FORCEINLINE Mat4 ToMat4(Quat const& _q)
 }
 KT_FORCEINLINE Mat3 ToMat3(Quat const& _q)
 {
+	KT_ASSERT(Abs(1.0f - Length(_q)) < 0.001f);
+
 	Mat3 m;
 	float const x2 = _q.x + _q.x;
 	float const y2 = _q.y + _q.y;

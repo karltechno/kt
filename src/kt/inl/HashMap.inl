@@ -60,6 +60,11 @@ void kt::HashMap<T_Key, T_Value, T_KeyOps>::Clear()
 }
 
 
+template <typename T_Key, typename T_Value, typename T_KeyOps /*= HashMap_KeyOps<T_Key>*/>
+void HashMap<T_Key, T_Value, T_KeyOps>::ClearAndFree()
+{
+	Release();
+}
 
 template<typename T_Key, typename T_Value, typename T_KeyOps>
 auto HashMap<T_Key, T_Value, T_KeyOps>::operator=(HashMap&& _other) -> HashMap&
@@ -315,7 +320,7 @@ auto HashMap<T_Key, T_Value, T_KeyOps>::InsertInternal(HashType const _hash, T_K
 		{
 			if (_setValIfAlreadyInMap)
 			{
-				kvps[pos].m_val = _val;
+				kvps[pos].m_val = std::move(_val);
 			}
 			return pos;
 		}

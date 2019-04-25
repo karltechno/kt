@@ -32,6 +32,17 @@ bool FileWriter::WriteBytes(void const* i_buff, uint64_t const i_bytesToWrite, u
 	return i_bytesToWrite == written;
 }
 
+FileReader::FileReader(FILE* _file)
+	: m_file(_file)
+{
+	// TODO: 64 bit
+	uint32_t const pos = ftell(m_file);
+	fseek(m_file, 0, SEEK_END);
+	uint32_t const end = ftell(m_file);
+	m_size = end - pos;
+	fseek(m_file, pos, SEEK_SET);
+}
+
 bool FileReader::ReadBytes(void* o_buff, uint64_t const i_bytesToRead, uint64_t* o_bytesRead /*= nullptr*/)
 {
 	size_t const read = fread(o_buff, 1, i_bytesToRead, m_file);

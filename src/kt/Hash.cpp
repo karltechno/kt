@@ -35,6 +35,39 @@ uint32_t StringHashI(kt::StringView const& _str)
 	return XXH32(buff, _str.m_size, 0);
 }
 
+// Case sensitive string hash.
+uint64_t StringHash64(char const* _str)
+{
+	return StringHash64(kt::StringView{ _str });
+}
+
+uint64_t StringHash64(kt::StringView const& _str)
+{
+	return XXH64(_str.m_ptr, _str.m_size, 0);
+}
+
+uint64_t StringHash64I(char const* _str)
+{
+	return StringHash64I(StringView{ _str });
+}
+
+uint64_t StringHash64I(kt::StringView const& _str)
+{
+	char* buff = (char*)KT_ALLOCA(_str.m_size);
+
+	char* dest = buff;
+	char* destEnd = buff + _str.m_size;
+	char const* src = _str.m_ptr;
+
+	while (dest != destEnd)
+	{
+		char const c = *src++;
+		*dest++ = (c >= 'A' && c <= 'Z') ? (c | 0x20) : c;
+	}
+
+	return XXH64(buff, _str.m_size, 0);
+}
+
 
 XXHash_Incremental32::XXHash_Incremental32()
 {

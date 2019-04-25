@@ -45,12 +45,14 @@ struct FileWriter : IWriter
 
 struct FileReader : IReader
 {
-	FileReader(FILE* _file)
-		: m_file(_file)
-	{}
+	FileReader(FILE* _file);
 
 	bool ReadBytes(void* o_buff, uint64_t const i_bytesToRead, uint64_t* o_bytesRead = nullptr) override;
 
+	uint64_t OriginalSize() const { return m_size; }
+
+private:
+	uint64_t m_size = 0;
 	FILE* m_file = nullptr;
 };
 

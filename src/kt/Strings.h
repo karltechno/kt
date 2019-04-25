@@ -130,6 +130,10 @@ struct StringView
 	template <uint32_t SizeT>
 	StringView(StaticString<SizeT> const& _str);
 
+	StringView Suffix(uint32_t _begin) const;
+	StringView Prefix(uint32_t _end) const;
+	StringView Slice(uint32_t _begin, uint32_t _end) const;
+
 	// Size getters.
 	uint32_t Size() const;
 	bool Empty() const;
@@ -178,6 +182,8 @@ StringView StrFind(StringView const& _view, char const _c);
 
 // Search for a character from the end of a string. Returns a string view [_c, end) or empty if not found.
 StringView StrFindR(StringView const& _view, char const _c);
+
+inline char ToLower(char _c);
 
 }
 

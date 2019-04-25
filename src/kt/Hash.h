@@ -33,6 +33,14 @@ uint32_t StringHash(kt::StringView const& _str);
 uint32_t StringHashI(char const* _str);
 uint32_t StringHashI(kt::StringView const& _str);
 
+// Case sensitive string hash.
+uint64_t StringHash64(char const* _str);
+uint64_t StringHash64(kt::StringView const& _str);
+
+// Insensitive string hash.
+uint64_t StringHash64I(char const* _str);
+uint64_t StringHash64I(kt::StringView const& _str);
+
 struct XXHash_Incremental32
 {
 	XXHash_Incremental32();

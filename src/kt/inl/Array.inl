@@ -222,7 +222,7 @@ auto Array<T>::PushBack(Args&&... _args) -> ValueType&
 		InternalGrowCapacity(m_size + 1u);
 	}
 
-	return *PlacementNew(m_data + m_size++, std::forward<Args...>(_args)...);
+	return *PlacementNew(m_data + m_size++, std::forward<Args>(_args)...);
 }
 
 template <typename T>

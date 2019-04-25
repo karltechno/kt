@@ -6,6 +6,7 @@ SET(COMPILED_SOURCES
     "Containers.cpp"
     "Core.cpp"
     "File.cpp"
+    "Handles.cpp"
     "HashMap.cpp"
     "Math.cpp"
     "String.cpp"
@@ -15,6 +16,8 @@ SET(COMPILED_SOURCES
     "Sort.cpp"
     "Memory.cpp"
     "Serialization.cpp"
+    "Slice.cpp"
+    "StaticFunctionTest.cpp"
 )
 
 

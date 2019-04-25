@@ -130,7 +130,7 @@ struct HashMap_KeyOps_StringI<StaticString<T_Size>>
 };
 
 template <typename T>
-struct HashMap_KeyOps_PassthroughInt
+struct HashMap_KeyOps_IdentityInt
 {
 	using HashType = T;
 
@@ -148,6 +148,6 @@ struct HashMap_KeyOps_PassthroughInt
 };
 
 template <typename T_Key, typename T_Value>
-struct IntegerKeyMap : HashMap<T_Key, T_Value, HashMap_KeyOps_PassthroughInt<T_Key>> {};
+struct IntegerKeyMap : HashMap<T_Key, T_Value, HashMap_KeyOps_IdentityInt<T_Key>> {};
 
 }
