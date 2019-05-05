@@ -26,6 +26,18 @@ auto Array<T>::Data() const -> ValueType const*
 template <typename T>
 void kt::Array<T>::Clear()
 {
+	if (!KT_HAS_TRIVIAL_DTOR(T))
+	{
+		T* begin = m_data;
+		T* end = m_data + m_size;
+
+		while (begin != end)
+		{
+			begin->~T();
+			++begin;
+		}
+	}
+
 	m_size = 0;
 }
 
@@ -66,17 +78,7 @@ auto kt::Array<T>::PushBack_Raw() -> ValueType*
 template <typename T>
 void Array<T>::ClearAndFree()
 {
-	if (!KT_HAS_TRIVIAL_DTOR(T))
-	{
-		T* begin = m_data;
-		T* end = m_data + m_size;
-
-		while (begin != end)
-		{
-			begin->~T();
-			++begin;
-		}
-	}
+	Clear();
 
 	if (m_data)
 	{
