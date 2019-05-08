@@ -121,21 +121,21 @@ auto VersionedHandlePool<DataT>::Alloc(DataT*& o_data) -> HandleType
 template <typename DataT>
 bool VersionedHandlePool<DataT>::IsValid(HandleType _handle) const
 {
-	return _handle.m_idx < m_capacity
-		&& m_entries[_handle.m_idx].m_inUse
-		&& m_entries[_handle.m_idx].m_version == _handle.m_ver;
+	return _handle.m_un.m_idx < m_capacity
+		&& m_entries[_handle.m_un.m_idx].m_inUse
+		&& m_entries[_handle.m_un.m_idx].m_version == _handle.m_un.m_ver;
 }
 
 template <typename DataT>
 DataT* VersionedHandlePool<DataT>::Lookup(HandleType _handle)
 {
-	if (_handle.m_idx >= m_capacity)
+	if (_handle.m_un.m_idx >= m_capacity)
 	{
 		return nullptr;
 	}
 
-	Entry& entry = m_entries[_handle.m_idx];
-	if (!entry.m_inUse || entry.m_version != _handle.m_ver)
+	Entry& entry = m_entries[_handle.m_un.m_idx];
+	if (!entry.m_inUse || entry.m_version != _handle.m_un.m_ver)
 	{
 		return nullptr;
 	}
@@ -149,10 +149,10 @@ void VersionedHandlePool<DataT>::Free(HandleType _handle)
 	KT_ASSERT(m_numAllocated);
 	KT_ASSERT(IsValid(_handle));
 	--m_numAllocated;
-	Entry& entry = m_entries[_handle.m_idx];
+	Entry& entry = m_entries[_handle.m_un.m_idx];
 	entry.m_inUse = 0;
 	entry.m_next = m_freeListHead;
-	m_freeListHead = _handle.m_idx;
+	m_freeListHead = _handle.m_un.m_idx;
 }
 
 template <typename DataT>

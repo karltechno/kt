@@ -97,7 +97,7 @@ struct Slice
 	uint32_t Size() const
 	{
 		KT_ASSERT(m_end >= m_begin);
-		return m_end - m_begin;
+		return uint32_t(m_end - m_begin);
 	}
 
 	bool Empty() const
@@ -122,7 +122,6 @@ struct Slice
 		KT_ASSERT(_idx < Size());
 		return m_begin[_idx];
 	}
-
 private:
 	T* m_begin = nullptr;
 	T* m_end = nullptr;

@@ -17,13 +17,23 @@ struct VersionedHandle
 
 	VersionedHandle(uint16_t _idx, uint16_t _ver)
 	{
-		m_idx = _idx;
-		m_ver = _ver;
+		m_un.m_idx = _idx;
+		m_un.m_ver = _ver;
 	}
 
 	bool IsValid() const
 	{
 		return m_packed != c_invalidBitPattern;
+	}
+
+	uint16_t Index() const
+	{
+		return m_un.m_idx;
+	}
+
+	uint16_t Version() const
+	{
+		return m_un.m_ver;
 	}
 
 	union
@@ -32,7 +42,7 @@ struct VersionedHandle
 		{
 			uint16_t m_idx;
 			uint16_t m_ver;
-		};
+		} m_un;
 
 		uint32_t m_packed;
 	};
