@@ -130,18 +130,16 @@ private:
 };
 
 template <typename T, uint32_t InplaceCapacityT>
-class InplaceArray : public Array<T>
+class InplaceArray : public InplaceContainerAllocator<sizeof(T) * InplaceCapacityT, KT_ALIGNOF(T)>
+					, public Array<T>
 {
 public:
 	InplaceArray(IAllocator* _fallback = GetDefaultAllocator())
-		: Array<T>(&m_allocator) // Array is initialized before m_allocator, but it does not allocate until m_allocator is initialized.
-		, m_allocator(_fallback)
+		: InplaceContainerAllocator<sizeof(T) * InplaceCapacityT, KT_ALIGNOF(T)>(_fallback)
+		, Array<T>(this) 
 	{
 		Array<T>::Reserve(InplaceCapacityT);
 	}
-
-private:
-	InplaceContainerAllocator<sizeof(T) * InplaceCapacityT, KT_ALIGNOF(T)> m_allocator;
 };
 
 }
