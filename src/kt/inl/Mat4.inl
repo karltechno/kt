@@ -32,6 +32,25 @@ KT_FORCEINLINE Mat4 Mat4::OrthographicLH_ZO(float const _left, float const _righ
 	return m;
 }
 
+KT_FORCEINLINE Mat4 Mat4::OrthographicRH_ZO(float const _left, float const _right, float _bottom, float _top, float _nearZ, float _farZ)
+{
+	Mat4 m;
+	::memset(&m, 0, sizeof(Mat4));
+
+	float recipW = 1.0f / (_right - _left);
+	float recipH = 1.0f / (_top - _bottom);
+	float range = 1.0f / (_nearZ - _farZ);
+
+	m[0][0] = recipW * 2.0f;
+	m[1][1] = recipH * 2.0f;
+	m[2][2] = range;
+	m[3][0] = (_left + _right) * -recipW;
+	m[3][1] = (_top + _bottom) * -recipH;
+	m[3][2] = range * _nearZ;
+	m[3][3] = 1.0f;
+	return m;
+}
+
 KT_FORCEINLINE Mat4::Mat4(Mat3 const& _mat3, Vec3 const& _pos)
 {
 	m_cols[0] = Vec4(_mat3[0], 0.0f);
@@ -314,6 +333,23 @@ KT_FORCEINLINE Mat4 Mat4::PerspectiveLH_ZO(float const _fov, float const _aspect
 	return ret;
 }
 
+KT_FORCEINLINE Mat4 Mat4::PerspectiveRH_ZO(float const _fov, float const _aspect, float const _near, float const _far)
+{
+	Mat4 ret;
+	::memset(&ret, 0, sizeof(Mat4));
+
+	float const f = Tan(kPiOverTwo - (_fov * 0.5f)); // cot(_fov * 0.5)
+	float const w = f / _aspect;
+	float const range = _far / (_near - _far);
+
+	ret.m_cols[0][0] = w;
+	ret.m_cols[1][1] = f;
+	ret.m_cols[2][2] = range;
+	ret.m_cols[2][3] = -1.0f;
+	ret.m_cols[3][2] = range * _near;
+	return ret;
+}
+
 KT_FORCEINLINE Mat4 Mat4::Identity()
 {
 	Mat4 ret;
@@ -364,6 +400,11 @@ KT_FORCEINLINE Mat4 Mat4::LookAtLH(Vec3 const& _origin, Vec3 const& _lookDir, Ve
 	ret.m_cols[3].w = 1.0f;
 
 	return ret;
+}
+
+KT_FORCEINLINE Mat4 Mat4::LookAtRH(Vec3 const& _origin, Vec3 const& _lookDir, Vec3 const& _up)
+{
+	return LookAtLH(_origin, -_lookDir, _up);
 }
 
 

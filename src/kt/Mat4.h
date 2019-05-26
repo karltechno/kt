@@ -14,10 +14,15 @@ struct Mat4
 {
 
 	KT_FORCEINLINE static Mat4 Identity();
+	
 	KT_FORCEINLINE static Mat4 PerspectiveLH_ZO(float const _fov, float const _aspect, float const _near, float const _far);
+	KT_FORCEINLINE static Mat4 PerspectiveRH_ZO(float const _fov, float const _aspect, float const _near, float const _far);
 	KT_FORCEINLINE static Mat4 OrthographicLH_ZO(float const _left, float const _right, float _bottom, float _top, float _nearZ, float _farZ);
+	KT_FORCEINLINE static Mat4 OrthographicRH_ZO(float const _left, float const _right, float _bottom, float _top, float _nearZ, float _farZ);
+
 	KT_FORCEINLINE static Mat4 Translation(Vec3 const& _translation);
 	KT_FORCEINLINE static Mat4 LookAtLH(Vec3 const& _origin, Vec3 const& _lookDir, Vec3 const& _up = Vec3(0.0f, 1.0f, 0.0f));
+	KT_FORCEINLINE static Mat4 LookAtRH(Vec3 const& _origin, Vec3 const& _lookDir, Vec3 const& _up = Vec3(0.0f, 1.0f, 0.0f));
 
 	KT_FORCEINLINE static Mat4 RotX(float const _theta);
 	KT_FORCEINLINE static Mat4 RotY(float const _theta);
