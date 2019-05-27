@@ -217,7 +217,7 @@ void StaticString<SizeT>::Resize(uint32_t const _sz)
 {
 	KT_ASSERT(_sz <= c_capacityNoNull);
 	m_size = Min(_sz, c_capacityNoNull);
-	m_data[m_size + 1] = 0;
+	m_data[m_size] = 0;
 }
 
 
