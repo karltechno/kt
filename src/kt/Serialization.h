@@ -142,6 +142,9 @@ void Serialize(ISerializer* _s, T& _t)
 template <typename T>
 void Serialize(ISerializer* _s, kt::Array<T>& _t);
 
+template <typename T, typename SerializeOneFn>
+void Serialize(ISerializer* _s, kt::Array<T>& _t, SerializeOneFn&& _fn);
+
 template <typename K, typename V, typename KeyOps>
 void Serialize(ISerializer* _s, kt::HashMap<K, V, KeyOps>& _t);
 

@@ -39,6 +39,26 @@ void Serialize(ISerializer* _s, kt::Array<T>& _t)
 	}
 }
 
+template <typename T, typename SerializeOneFn>
+void Serialize(ISerializer* _s, Array<T>& _t, SerializeOneFn&& _fn)
+{
+	if (_s->SerializeMode() == ISerializer::Mode::Write)
+	{
+		uint32_t numElements = _t.Size();
+		_s->SerializeBytes(&numElements, sizeof(uint32_t));
+	}
+	else
+	{
+		uint32_t numElements;
+		_s->SerializeBytes(&numElements, sizeof(uint32_t));
+		_t.Resize(numElements);
+	}
+
+	for (T& element : _t)
+	{
+		_fn(_s, element);
+	}
+}
 
 
 template <typename K, typename V, typename KeyOps>
