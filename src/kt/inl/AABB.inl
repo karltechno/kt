@@ -1,5 +1,7 @@
 #include "../AABB.h"
 
+#include <float.h>
+
 namespace kt
 {
 
@@ -23,6 +25,12 @@ KT_FORCEINLINE Vec3 AABB::Center() const
 KT_FORCEINLINE Vec3 AABB::HalfSize() const
 {
 	return (m_max - m_min) * 0.5f;
+}
+
+
+KT_FORCEINLINE AABB AABB::FloatMax()
+{
+	return AABB(kt::Vec3(FLT_MAX), kt::Vec3(-FLT_MAX));
 }
 
 
