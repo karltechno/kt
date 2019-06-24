@@ -5,7 +5,7 @@ namespace kt
 {
 
 template <typename T>
-struct SliceIteratorHelper
+struct SliceConstHelper
 {
 	static bool const IsConst = false;
 
@@ -14,10 +14,13 @@ struct SliceIteratorHelper
 
 	using Reference = T&;
 	using ConstReference = T const&;
+
+	using NonConstT = T;
+	using ConstT = const T;
 };
 
 template <typename T>
-struct SliceIteratorHelper<const T>
+struct SliceConstHelper<const T>
 {
 	static bool const IsConst = true;
 
@@ -26,6 +29,9 @@ struct SliceIteratorHelper<const T>
 
 	using Reference = T const&;
 	using ConstReference = T const&;
+
+	using NonConstT = T;
+	using ConstT = const T;
 };
 
 template <typename T>
@@ -33,20 +39,20 @@ struct Slice
 {
 	Slice() = default;
 
-	using Iterator			= typename SliceIteratorHelper<T>::Iterator;
-	using ConstIterator		= typename SliceIteratorHelper<T>::ConstIterator;
+	using Iterator			= typename SliceConstHelper<T>::Iterator;
+	using ConstIterator		= typename SliceConstHelper<T>::ConstIterator;
 
-	using Reference			= typename SliceIteratorHelper<T>::Reference;
-	using ConstReference	= typename SliceIteratorHelper<T>::ConstReference;
+	using Reference			= typename SliceConstHelper<T>::Reference;
+	using ConstReference	= typename SliceConstHelper<T>::ConstReference;
 
 	template <size_t CArraySizeT>
-	explicit Slice(T(&_cArray)[CArraySizeT])
+	Slice(T(&_cArray)[CArraySizeT])
 	{
 		m_begin = &_cArray[0];
 		m_end = m_begin + CArraySizeT;
 	}
 	
-	explicit Slice(T& _elem)
+	Slice(T& _elem)
 		: m_begin(&_elem)
 		, m_end((&_elem) + 1)
 	{}
