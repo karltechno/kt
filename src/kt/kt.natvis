@@ -30,7 +30,7 @@
     <DisplayString>{{ {m_data, s} }}</DisplayString>
     <Expand>
       <Item Name="Size" ExcludeView="simple">m_size</Item>
-      <Item Name="Capacity" ExcludeView="simple">c_capacityNoNull</Item>
+      <Item Name="Capacity" ExcludeView="simple">sizeof(m_data)</Item>
       <Item Name="String" ExcludeView="simple">m_data</Item>
     </Expand>
   </Type>
