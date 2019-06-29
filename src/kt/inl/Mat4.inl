@@ -95,6 +95,11 @@ KT_FORCEINLINE void Mat4::SetPos(Vec3 const & _pos)
 	m_cols[3] = Vec4(_pos, 1.0f);
 }
 
+KT_FORCEINLINE kt::Vec3 Mat4::GetPos() const
+{
+	return kt::Vec3(m_cols[3].x, m_cols[3].y, m_cols[3].z);
+}
+
 KT_FORCEINLINE void Mat4::SetRot(Mat3 const & _mat3)
 {
 	m_cols[0] = Vec4(_mat3[0], 0.0f);
