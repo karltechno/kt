@@ -45,6 +45,8 @@ struct Mat4
 	KT_FORCEINLINE void SetPos(Vec3 const& _pos);
 	KT_FORCEINLINE void SetRot(Mat3 const& _mat3);
 
+	KT_FORCEINLINE kt::Vec3 GetPos() const;
+
 	KT_FORCEINLINE float* Data();
 	KT_FORCEINLINE float const* Data() const;
 
