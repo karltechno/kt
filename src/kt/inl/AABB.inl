@@ -2,6 +2,9 @@
 
 #include <float.h>
 
+#include "Mat3.h"
+#include "Mat4.h"
+
 namespace kt
 {
 
@@ -31,6 +34,67 @@ KT_FORCEINLINE Vec3 AABB::HalfSize() const
 KT_FORCEINLINE AABB AABB::FloatMax()
 {
 	return AABB(kt::Vec3(FLT_MAX), kt::Vec3(-FLT_MAX));
+}
+
+
+// See rtcd page 87
+KT_FORCEINLINE AABB AABB::Transformed(kt::Mat3 const& _mat, kt::Vec3 _p) const
+{
+	AABB ret;
+	ret.m_min = _p;
+	ret.m_max = _p;
+
+	for (uint32_t i = 0; i < 3; ++i)
+	{
+		for (uint32_t j = 0; j < 3; ++j)
+		{
+			float const e = _mat[j][i] * m_min[j];
+			float const f = _mat[j][i] * m_max[j];
+		
+			if (e < f)
+			{
+				ret.m_min[i] += e;
+				ret.m_max[i] += f;
+			}
+			else
+			{
+				ret.m_min[i] += f;
+				ret.m_max[i] += e;
+			}
+		}
+	}
+
+	return ret;
+}
+
+// See rtcd page 87
+KT_FORCEINLINE AABB AABB::Transformed(kt::Mat4 const& _mat) const
+{
+	AABB ret;
+	ret.m_min = _mat.GetPos();
+	ret.m_max = _mat.GetPos();
+
+	for (uint32_t i = 0; i < 3; ++i)
+	{
+		for (uint32_t j = 0; j < 3; ++j)
+		{
+			float const e = _mat[j][i] * m_min[j];
+			float const f = _mat[j][i] * m_max[j];
+
+			if (e < f)
+			{
+				ret.m_min[i] += e;
+				ret.m_max[i] += f;
+			}
+			else
+			{
+				ret.m_min[i] += f;
+				ret.m_max[i] += e;
+			}
+		}
+	}
+
+	return ret;
 }
 
 
