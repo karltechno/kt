@@ -23,7 +23,7 @@ struct AABB
 	KT_FORCEINLINE Vec3 Center() const;
 	KT_FORCEINLINE Vec3 HalfSize() const;
 
-	KT_FORCEINLINE AABB Transformed(kt::Mat3 const& _mat, kt::Vec3 _p) const;
+	KT_FORCEINLINE AABB Transformed(kt::Mat3 const& _mat, kt::Vec3 const& _p) const;
 	KT_FORCEINLINE AABB Transformed(kt::Mat4 const& _mat) const;
 
 	Vec3 m_min;

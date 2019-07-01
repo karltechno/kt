@@ -38,7 +38,7 @@ KT_FORCEINLINE AABB AABB::FloatMax()
 
 
 // See rtcd page 87
-KT_FORCEINLINE AABB AABB::Transformed(kt::Mat3 const& _mat, kt::Vec3 _p) const
+KT_FORCEINLINE AABB AABB::Transformed(kt::Mat3 const& _mat, kt::Vec3 const& _p) const
 {
 	AABB ret;
 	ret.m_min = _p;
