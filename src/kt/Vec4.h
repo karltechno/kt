@@ -52,6 +52,8 @@ struct Vec4
 	KT_FORCEINLINE float const& operator[](uint32_t const _index) const;
 };
 
+KT_FORCEINLINE Vec4 operator* (Vec4 const& _lhs, Vec4 const& _rhs);
+
 KT_FORCEINLINE Vec4 operator* (Vec4 const& _lhs, float const _f);
 
 KT_FORCEINLINE Vec4 operator/ (Vec4 const& _lhs, float const _f);

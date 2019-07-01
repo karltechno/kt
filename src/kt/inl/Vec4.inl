@@ -79,6 +79,11 @@ KT_FORCEINLINE float const& Vec4::operator[](uint32_t const _index) const
 	return (&x)[_index];
 }
 
+KT_FORCEINLINE Vec4 operator* (Vec4 const& _lhs, Vec4 const& _rhs)
+{
+	return Vec4(_lhs.x * _rhs.x, _lhs.y * _rhs.y, _lhs.z * _rhs.z, _lhs.w * _rhs.w);
+}
+
 
 KT_FORCEINLINE Vec4 operator* (Vec4 const& _lhs, float const _f)
 {

@@ -38,6 +38,8 @@ struct Vec2
 	KT_FORCEINLINE float const& operator[](uint32_t const _index) const;
 };
 
+KT_FORCEINLINE Vec2 operator* (Vec2 const& _lhs, Vec2 const& _rhs);
+
 KT_FORCEINLINE Vec2 operator* (Vec2 const& _lhs, float const _f);
 
 KT_FORCEINLINE Vec2 operator/ (Vec2 const& _lhs, float const _f);

@@ -49,6 +49,8 @@ struct Vec3
 	KT_FORCEINLINE float operator[](uint32_t const _index) const;
 };
 
+KT_FORCEINLINE Vec3 operator* (Vec3 const& _lhs, Vec3 const& _rhs);
+
 KT_FORCEINLINE Vec3 operator* (Vec3 const& _lhs, float const _f);
 
 KT_FORCEINLINE Vec3 operator/ (Vec3 const& _lhs, float const _f);

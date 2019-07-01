@@ -60,6 +60,10 @@ KT_FORCEINLINE float const& Vec2::operator[](uint32_t const _index) const
 	return (&x)[_index];
 }
 
+KT_FORCEINLINE Vec2 operator* (Vec2 const& _lhs, Vec2 const& _rhs)
+{
+	return Vec2(_lhs.x * _rhs.x, _lhs.y * _rhs.y);
+}
 
 KT_FORCEINLINE Vec2 operator* (Vec2 const& _lhs, float const _f)
 {
