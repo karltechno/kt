@@ -2,8 +2,8 @@
 
 #include <float.h>
 
-#include "Mat3.h"
-#include "Mat4.h"
+#include "../Mat3.h"
+#include "../Mat4.h"
 
 namespace kt
 {
