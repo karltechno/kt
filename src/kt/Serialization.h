@@ -32,13 +32,32 @@ struct IWriter
 	}
 };
 
-struct FileWriter : IWriter
+struct ISeeker
+{
+	virtual ~ISeeker() {}
+
+	enum class Origin
+	{
+		Absolute,
+		Relative
+	};
+
+	virtual void SeekTo(int64_t _offset, Origin _origin) = 0;
+	virtual uint64_t CurrentPos() const = 0;
+};
+
+struct IWriterSeeker : ISeeker, IWriter {};
+
+struct FileWriter : IWriterSeeker
 {
 	FileWriter(FILE* _file)
 		: m_file(_file)
 	{}
 
 	bool WriteBytes(void const* i_buff, uint64_t const _bytesToWrite, uint64_t* o_bytesWritten = nullptr) override;
+
+	void SeekTo(int64_t _offset, Origin _origin) override;
+	uint64_t CurrentPos() const	override;
 
 	FILE* m_file = nullptr;
 };
